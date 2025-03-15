@@ -1,4 +1,11 @@
-const { defineConfig } = require('@vue/cli-service')
-module.exports = defineConfig({
-  transpileDependencies: true
-})
+module.exports = {
+  devServer: {
+    proxy: {
+      "/shipping/quote": {
+        target: "https://private-anon-26c05fbe5d-frenetapi.apiary-mock.com",
+        changeOrigin: true,
+        pathRewrite: { "^/shipping/quote": "/shipping/quote" },
+      },
+    },
+  },
+};
