@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <h6>{{ label }}</h6>
+  <div class="input-wrapper">
+    <label>{{ label }}</label>
     <input
       :type="type"
       :placeholder="placeholder"
@@ -30,20 +30,53 @@ export default {
 </script>
 
 <style scoped>
-h6 {
-  margin: 16px 0 8px 0;
+.input-wrapper {
+  display: flex;
+  flex-direction: column;
   text-align: left;
+  width: 100%;
+  align-self: end;
 }
+
+label {
+  font-size: 14px;
+  margin: 16px 0 4px 0;
+}
+
 input {
   background: #f1f5f9;
-  border-radius: 2px;
+  border-radius: 4px;
   border: none;
-  font-size: 10px;
-  padding: 4px 8px;
-  height: 24px;
+  padding: 8px;
+  font-size: 14px;
+  outline: none;
 }
 
 .small {
-  width: 110px;
+  width: 90%;
+}
+
+input:focus {
+  outline: 1px solid #028ecc;
+}
+
+@media (max-width: 768px) {
+  input {
+    font-size: 12px;
+  }
+  .small {
+    width: 95%;
+  }
+}
+
+@media (min-width: 768px) {
+  .small {
+    width: 86%;
+  }
+}
+@media (min-width: 1080px) {
+  .small {
+    width: 90%;
+  }
 }
 </style>

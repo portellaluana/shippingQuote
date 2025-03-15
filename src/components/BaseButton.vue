@@ -1,5 +1,5 @@
 <template>
-  <button :type="type" @click="$emit('click')">
+  <button :type="type" class="base-button" @click="$emit('click')">
     <slot></slot>
   </button>
 </template>
@@ -14,16 +14,21 @@ export default {
   },
 };
 </script>
+
 <style scoped>
-button {
+.base-button {
   background-color: #02aeef;
-  border-radius: 2px;
+  border-radius: 6px;
   border: none;
-  font-size: 10px;
-  padding: 4px 8px;
-  color: white;
+  font-size: 14px;
   font-weight: 700;
-  width: 90px;
-  height: 32px;
+  padding: 10px 16px;
+  color: white;
+  cursor: pointer;
+  transition: background 0.3s;
+  width: 100%;
+}
+.base-button:hover {
+  background-color: #028ecc;
 }
 </style>

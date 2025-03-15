@@ -1,18 +1,29 @@
 <template>
   <div id="app">
-    <div class="overlay">
-      <ShippingForm msg="Welcome to Your Vue.js App" />
-    </div>
+    <BaseTabs v-model="activeTab" :tabs="['Lojista', 'Cliente']">
+      <template #Lojista>
+        <ShippingForm tipo="Lojista" />
+      </template>
+      <template #Cliente>
+        <ShippingForm tipo="Cliente" />
+      </template>
+    </BaseTabs>
   </div>
 </template>
 
 <script>
+import BaseTabs from "./components/BaseTabs.vue";
 import ShippingForm from "./components/ShippingForm.vue";
 
 export default {
-  name: "App",
   components: {
+    BaseTabs,
     ShippingForm,
+  },
+  data() {
+    return {
+      activeTab: "Lojista",
+    };
   },
 };
 </script>
@@ -26,11 +37,16 @@ export default {
   text-align: center;
   color: #3c4151;
   min-height: 100vh;
-  background-image: url("./assets/background.png");
+  background-image: url("/public/background.svg");
   background-size: cover;
-  background-position: center center;
+  background-position: top center;
   background-repeat: no-repeat;
   position: relative;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .overlay {
@@ -43,16 +59,5 @@ export default {
   padding: 20px;
   width: 60%;
   max-width: 1080px;
-}
-
-#app::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(255, 255, 255, 0.1);
-  z-index: 0;
 }
 </style>

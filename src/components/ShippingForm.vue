@@ -1,67 +1,79 @@
 <template>
   <div id="shippingForm">
     <form @submit.prevent="handleSubmit">
-      <div class="container-cep">
+      <div class="container">
         <BaseInput
-          aria-label="Origem"
-          v-model="form.cep_origin"
+          v-if="tipo === 'Lojista'"
+          v-model="form.SellerCEP"
           placeholder="CEP de Origem"
           label="Origem"
           classe="normal"
         />
         <BaseInput
-          classe="normal"
-          v-model="form.cep_destination"
+          v-model="form.RecipientCEP"
           placeholder="CEP de Destino"
           label="Destino"
+          classe="normal"
         />
       </div>
-      <div class="container">
-        <div>
-          <BaseInput
-            classe="small"
-            v-model="form.weight"
-            type="number"
-            placeholder="Peso (kg)"
-            label="Peso"
-          />
-        </div>
-        <div class="container-volume">
-          <BaseInput
-            classe="small"
-            v-model="form.width"
-            type="number"
-            placeholder="Largura (cm)"
-            label="Volume"
-          />
-          <BaseInput
-            classe="small"
-            v-model="form.height"
-            type="number"
-            placeholder="Altura (cm)"
-          />
-          <BaseInput
-            classe="small"
-            v-model="form.length"
-            type="number"
-            placeholder="Comprimento (cm)"
-          />
-          <BaseInput
-            classe="small"
-            v-model="form.declared_value"
-            type="number"
-            placeholder="Valor em Reais"
-          />
-          <BaseButton type="submit">Obter Cotação</BaseButton>
-        </div>
+
+      <div v-if="tipo === 'Lojista'" class="container">
+        <BaseInput
+          v-model="form.Weight"
+          type="number"
+          placeholder="Peso (kg)"
+          label="Peso"
+          classe="small"
+        />
+        <BaseInput
+          v-model="form.Width"
+          type="number"
+          placeholder="Largura (cm)"
+          label="Volume"
+          classe="small"
+        />
+        <BaseInput
+          v-model="form.Height"
+          type="number"
+          placeholder="Altura (cm)"
+          classe="small"
+        />
+        <BaseInput
+          v-model="form.Length"
+          type="number"
+          placeholder="Comprimento (cm)"
+          classe="small"
+        />
+        <BaseInput
+          v-model="form.declared_value"
+          type="number"
+          placeholder="Valor em Reais"
+          classe="small"
+        />
+      </div>
+
+      <div class="button-container">
+        <BaseButton type="submit">Fazer cotação</BaseButton>
       </div>
     </form>
 
-    <div v-if="shippingServices.length">
-      <h2>Cotações de Frete</h2>
+    <div v-if="filteredShippingServices.length" class="result">
+      <section class="container-cotacao">
+        <h2>Últimas Cotações de Frete</h2>
+        <div>
+          <label for="filter">Mostrar: </label>
+          <select id="filter" v-model="filterCount" @change="applyFilter">
+            <option value="5">Últimas 5</option>
+            <option value="10">Últimas 10</option>
+            <option value="20">Últimas 20</option>
+          </select>
+        </div>
+      </section>
       <ul>
-        <li v-for="(service, index) in shippingServices" :key="index">
-          {{ service.Carrier }}: R$ {{ service.Price }}
+        <li v-for="(service, index) in filteredShippingServices" :key="index">
+          {{ index + 1 }}. {{ service.index }}{{ service.ServiceDescription }}:
+          R$
+          {{ service.ShippingPrice }}
         </li>
       </ul>
     </div>
@@ -78,57 +90,126 @@ export default {
     BaseInput,
     BaseButton,
   },
+  props: {
+    tipo: {
+      type: String,
+      required: true,
+    },
+  },
   data() {
     return {
       form: {
-        cep_origin: "",
-        cep_destination: "",
-        weight: "",
-        width: "",
-        height: "",
-        length: "",
+        SellerCEP: "",
+        RecipientCEP: "",
+        Weight: "",
+        Width: "",
+        Height: "",
+        Length: "",
         declared_value: "",
       },
       shippingServices: [],
+      filteredShippingServices: [],
+      filterCount: 5,
     };
+  },
+  created() {
+    const storedQuotes =
+      JSON.parse(localStorage.getItem("shippingQuotes")) || [];
+    this.shippingServices = storedQuotes;
+
+    this.applyFilter();
   },
   methods: {
     async handleSubmit() {
       try {
-        const services = await getShippingQuote(this.form);
-        this.shippingServices = services;
+        const response = await getShippingQuote(this.form);
+        console.log(response);
+
+        if (
+          response.ShippingSevicesArray &&
+          Array.isArray(response.ShippingSevicesArray)
+        ) {
+          const newShippingServices = response.ShippingSevicesArray;
+
+          const storedQuotes =
+            JSON.parse(localStorage.getItem("shippingQuotes")) || [];
+
+          storedQuotes.unshift(...newShippingServices);
+
+          const limitedQuotes = storedQuotes.slice(0, 100);
+
+          localStorage.setItem("shippingQuotes", JSON.stringify(limitedQuotes));
+
+          this.shippingServices = limitedQuotes;
+
+          this.applyFilter();
+        } else {
+          console.error(
+            "Dados de cotação de frete não encontrados ou formato inválido."
+          );
+        }
       } catch (error) {
-        console.error("Erro ao obter cotação de frete:", error);
+        console.error("Erro ao fazer cotação de frete:", error);
       }
+    },
+
+    applyFilter() {
+      this.filteredShippingServices = this.shippingServices.slice(
+        0,
+        this.filterCount
+      );
+    },
+
+    changeFilterCount(count) {
+      this.filterCount = count;
+      this.applyFilter();
     },
   },
 };
 </script>
+
+
 <style scoped>
 #shippingForm {
-  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
 }
-.container,
-.container-cep {
+
+.container {
   display: flex;
-  max-width: 1080px;
-  gap: 16px;
-  width: 100%;
+  gap: 8px;
+  align-items: baseline;
 }
-.container-ceps {
-  width: 100%;
+
+.button-container {
+  text-align: center;
+  margin-top: 16px;
 }
-.container-cep {
-  width: 50%;
+h2 {
+  text-align: left;
+  margin: 0;
+  font-size: 16px;
 }
-form {
-  justify-content: left;
-}
-.container-volume {
+.container-cotacao {
   display: flex;
-  align-items: end;
-  gap: 16px;
-  width: 100%;
+  align-items: center;
   justify-content: space-between;
+  margin-top: 20px;
+}
+h6 {
+  font-size: 14px;
+  margin: 16px 0 4px 0;
+}
+ul {
+  padding: 0;
+}
+li {
+  list-style: none;
+  text-align: left;
+}
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
 }
 </style>
