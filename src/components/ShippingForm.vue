@@ -19,36 +19,13 @@
 
       <div v-if="tipo === 'Lojista'" class="container">
         <BaseInput
-          v-model="form.Weight"
-          type="number"
-          placeholder="Peso (kg)"
-          label="Peso"
-          classe="small"
-        />
-        <BaseInput
-          v-model="form.Width"
-          type="number"
-          placeholder="Largura (cm)"
-          label="Volume"
-          classe="small"
-        />
-        <BaseInput
-          v-model="form.Height"
-          type="number"
-          placeholder="Altura (cm)"
-          classe="small"
-        />
-        <BaseInput
-          v-model="form.Length"
-          type="number"
-          placeholder="Comprimento (cm)"
-          classe="small"
-        />
-        <BaseInput
-          v-model="form.declared_value"
-          type="number"
-          placeholder="Valor em Reais"
-          classe="small"
+          v-for="field in lojistaFields"
+          :key="field.name"
+          v-model="form[field.name]"
+          :type="field.type"
+          :placeholder="field.placeholder"
+          :label="field.label"
+          :classe="field.classe"
         />
       </div>
 
@@ -60,16 +37,14 @@
     <div v-if="filteredShippingServices.length" class="result">
       <section class="container-cotacao">
         <h2>Últimas Cotações de Frete</h2>
-        <div>
-          <label for="filter">Mostrar: </label>
-          <select id="filter" v-model="filterCount" @change="applyFilter">
-            <option value="5">Últimas 5</option>
-            <option value="10">Últimas 10</option>
-            <option value="20">Últimas 20</option>
-          </select>
-        </div>
       </section>
-      <ul>
+      <ul
+        class="shipping-list"
+        :style="{
+          maxHeight: filteredShippingServices.length > 5 ? '100px' : 'auto',
+          overflowY: filteredShippingServices.length > 5 ? 'auto' : 'visible',
+        }"
+      >
         <li v-for="(service, index) in filteredShippingServices" :key="index">
           {{ index + 1 }}. {{ service.index }}{{ service.ServiceDescription }}:
           R$
@@ -110,16 +85,54 @@ export default {
       shippingServices: [],
       filteredShippingServices: [],
       filterCount: 5,
+      lojistaFields: [
+        {
+          name: "Weight",
+          type: "number",
+          placeholder: "Peso (kg)",
+          label: "Peso",
+          classe: "small",
+        },
+        {
+          name: "Width",
+          type: "number",
+          placeholder: "Largura (cm)",
+          label: "Volume",
+          classe: "small",
+        },
+        {
+          name: "Height",
+          type: "number",
+          placeholder: "Altura (cm)",
+          classe: "small",
+        },
+        {
+          name: "Length",
+          type: "number",
+          placeholder: "Comprimento (cm)",
+          classe: "small",
+        },
+        {
+          name: "declared_value",
+          type: "number",
+          placeholder: "Valor em Reais",
+          label: "Valor",
+          classe: "small",
+        },
+      ],
     };
   },
   created() {
-    const storedQuotes =
-      JSON.parse(localStorage.getItem("shippingQuotes")) || [];
-    this.shippingServices = storedQuotes;
-
-    this.applyFilter();
+    this.loadStoredQuotes();
   },
   methods: {
+    loadStoredQuotes() {
+      const storedQuotes =
+        JSON.parse(localStorage.getItem("shippingQuotes")) || [];
+      this.shippingServices = storedQuotes;
+      this.applyFilter();
+    },
+
     async handleSubmit() {
       try {
         const response = await getShippingQuote(this.form);
@@ -130,19 +143,7 @@ export default {
           Array.isArray(response.ShippingSevicesArray)
         ) {
           const newShippingServices = response.ShippingSevicesArray;
-
-          const storedQuotes =
-            JSON.parse(localStorage.getItem("shippingQuotes")) || [];
-
-          storedQuotes.unshift(...newShippingServices);
-
-          const limitedQuotes = storedQuotes.slice(0, 100);
-
-          localStorage.setItem("shippingQuotes", JSON.stringify(limitedQuotes));
-
-          this.shippingServices = limitedQuotes;
-
-          this.applyFilter();
+          this.storeShippingServices(newShippingServices);
         } else {
           console.error(
             "Dados de cotação de frete não encontrados ou formato inválido."
@@ -153,11 +154,18 @@ export default {
       }
     },
 
+    storeShippingServices(newShippingServices) {
+      const storedQuotes =
+        JSON.parse(localStorage.getItem("shippingQuotes")) || [];
+      storedQuotes.unshift(...newShippingServices);
+      const limitedQuotes = storedQuotes.slice(0, 100);
+      localStorage.setItem("shippingQuotes", JSON.stringify(limitedQuotes));
+      this.shippingServices = limitedQuotes;
+      this.applyFilter();
+    },
+
     applyFilter() {
-      this.filteredShippingServices = this.shippingServices.slice(
-        0,
-        this.filterCount
-      );
+      this.filteredShippingServices = this.shippingServices;
     },
 
     changeFilterCount(count) {
@@ -167,7 +175,6 @@ export default {
   },
 };
 </script>
-
 
 <style scoped>
 #shippingForm {
@@ -185,28 +192,73 @@ export default {
   text-align: center;
   margin-top: 16px;
 }
+
 h2 {
   text-align: left;
   margin: 0;
   font-size: 16px;
 }
+
 .container-cotacao {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-top: 20px;
 }
+
 h6 {
   font-size: 14px;
   margin: 16px 0 4px 0;
 }
-ul {
+
+ul.shipping-list {
   padding: 0;
+  max-height: 100px;
+  overflow-y: auto;
+  transition: max-height 0.3s ease;
 }
+
+ul.shipping-list.no-scroll {
+  max-height: none;
+  overflow-y: visible;
+}
+
+ul.shipping-list {
+  padding: 0;
+  max-height: 100px;
+  overflow-y: auto;
+  cursor: pointer;
+}
+
+ul.shipping-list {
+  padding: 0;
+  max-height: 100px;
+  overflow-y: auto;
+}
+
+ul.shipping-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+ul.shipping-list::-webkit-scrollbar-thumb {
+  background-color: #028ecc;
+  border-radius: 10px;
+}
+
+ul.shipping-list::-webkit-scrollbar-thumb:hover {
+  background-color: #028ecc;
+}
+
+ul.shipping-list::-webkit-scrollbar-track {
+  background-color: #f1f1f1;
+  border-radius: 10px;
+}
+
 li {
   list-style: none;
   text-align: left;
 }
+
 @media (max-width: 768px) {
   .container {
     flex-direction: column;
