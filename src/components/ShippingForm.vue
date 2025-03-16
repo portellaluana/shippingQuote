@@ -96,24 +96,8 @@
       </div>
     </form>
 
-    <div v-if="filteredShippingServices.length" class="result">
-      <section class="container-cotacao">
-        <h2>Últimas Cotações de Frete</h2>
-      </section>
-      <ul
-        class="shipping-list"
-        :style="{
-          maxHeight: filteredShippingServices.length > 5 ? '100px' : 'auto',
-          overflowY: filteredShippingServices.length > 5 ? 'auto' : 'visible',
-        }"
-      >
-        <li v-for="(service, index) in filteredShippingServices" :key="index">
-          {{ index + 1 }}. {{ service.index }}{{ service.ServiceDescription }}:
-          R$
-          {{ service.ShippingPrice }}
-        </li>
-      </ul>
-    </div>
+    <!-- Use o novo componente para exibir as cotações de frete -->
+    <ShippingQuoteList :shippingServices="filteredShippingServices" />
   </div>
 </template>
 
@@ -121,11 +105,13 @@
 import { getShippingQuote } from "../services/shippingService";
 import BaseInput from "./BaseInput.vue";
 import BaseButton from "./BaseButton.vue";
+import ShippingQuoteList from "./ShippingQuoteList.vue";
 
 export default {
   components: {
     BaseInput,
     BaseButton,
+    ShippingQuoteList,
   },
   props: {
     tipo: {
@@ -241,6 +227,7 @@ export default {
   },
 };
 </script>
+
 
 <style scoped>
 #shippingForm {
