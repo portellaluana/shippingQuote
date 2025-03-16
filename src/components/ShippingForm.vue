@@ -1,18 +1,35 @@
 <template>
   <div id="shippingForm">
-    <form @submit.prevent="handleSubmit">
+    <form @submit.prevent="handleData">
       <div class="container-cep">
-        <BaseInput
-          v-if="tipo === 'Lojista'"
-          v-model="form.SellerCEP"
-          label="Origem*"
-          classe="normal"
-        />
-        <BaseInput
-          v-model="form.RecipientCEP"
-          label="Destino*"
-          classe="normal"
-        />
+        <div class="container-input">
+          <label for="SellerCEP">Origem*</label>
+          <input
+            v-if="tipo === 'Lojista'"
+            v-model="form.SellerCEP"
+            class="normal"
+            id="SellerCEP"
+          />
+        </div>
+        <div class="container-input">
+          <label for="destino">Destino*</label>
+          <input
+            v-model="form.RecipientCEP"
+            label="Destino*"
+            class="normal"
+            id="destino"
+          />
+        </div>
+
+        <div class="container-input">
+          <label for="Valor">Valor*</label>
+          <input
+            v-model="form.declared_value"
+            type="number"
+            placeholder="R$"
+            id="Valor"
+          />
+        </div>
       </div>
 
       <div v-if="tipo === 'Lojista'">
@@ -20,61 +37,67 @@
           v-for="(produto, index) in produtos"
           :key="index"
           class="container-details"
-          :style="index !== 0 ? { borderTop: '1px solid #028ecc' } : {}"
+          :style="
+            index !== 0
+              ? { borderTop: '1px solid #028ecc', paddingTop: '16px' }
+              : {}
+          "
         >
-          <BaseInput
-            v-model="produto.category"
-            type="string"
-            label="Categoria"
-            classe="small"
-          />
-          <BaseInput
-            v-model="produto.sku"
-            type="string"
-            label="SKU"
-            classe="small"
-          />
-          <BaseInput
-            v-model="produto.quantity"
-            type="number"
-            label="Quantidade"
-            classe="small"
-          />
-          <BaseInput
-            v-model="produto.Weight"
-            type="number"
-            placeholder="(kg)"
-            label="Peso*"
-            classe="small"
-          />
-          <BaseInput
-            v-model="produto.Width"
-            type="number"
-            placeholder="(cm)"
-            label="Volume*"
-            classe="small"
-          />
-          <BaseInput
-            v-model="produto.height"
-            label="Altura*"
-            type="number"
-            placeholder="(cm)"
-            classe="small"
-          />
-          <BaseInput
-            v-model="produto.length"
-            label="Comprimento*"
-            type="number"
-            placeholder="(cm)"
-            classe="small"
-          />
-          <BaseInput
-            label="Valor*"
-            v-model="produto.declared_value"
-            type="number"
-            placeholder="R$"
-            classe="small"
-          />
+          <div class="container-input-small">
+            <label for="categoria">Categoria</label>
+            <input v-model="produto.category" type="string" id="categoria" />
+          </div>
+
+          <div class="container-input-small">
+            <label for="sku">SKU</label>
+            <input v-model="produto.sku" type="string" id="sku" />
+          </div>
+
+          <div class="container-input-small">
+            <label for="quantidade">Quantidade</label>
+            <input v-model="produto.quantity" type="number" id="quantidade" />
+          </div>
+
+          <div class="container-input-small">
+            <label for="peso">Peso</label>
+            <input
+              v-model="produto.Weight"
+              type="number"
+              placeholder="(kg)"
+              label="Peso*"
+              id="peso"
+            />
+          </div>
+
+          <div class="container-input-small">
+            <label for="volume">Volume</label>
+            <input
+              v-model="produto.Width"
+              type="number"
+              placeholder="(cm)"
+              id="volume"
+            />
+          </div>
+
+          <div class="container-input-small">
+            <label for="altura">Altura</label>
+            <input
+              v-model="produto.height"
+              type="number"
+              placeholder="(cm)"
+              id="altura"
+            />
+          </div>
+
+          <div class="container-input-small">
+            <label for="comprimento">Comprimento*</label>
+            <input
+              v-model="produto.length"
+              type="number"
+              placeholder="(cm)"
+              id="comprimento"
+            />
+          </div>
 
           <button
             v-if="index !== 0"
@@ -85,11 +108,11 @@
       </div>
 
       <div class="button-container">
-        <BaseButton class="secondary-btn" @click.prevent="adicionarProduto">
-          Adicionar mais produtos
-        </BaseButton>
         <BaseButton type="submit" class="primary-btn">Fazer cotação</BaseButton>
       </div>
+      <BaseButton class="secondary-btn" @click.prevent="adicionarProduto">
+        Adicionar mais produtos
+      </BaseButton>
     </form>
 
     <ShippingQuoteList :shippingServices="filteredShippingServices" />
@@ -98,13 +121,11 @@
 
 <script>
 import { getShippingQuote } from "../services/shippingService";
-import BaseInput from "./BaseInput.vue";
 import BaseButton from "./BaseButton.vue";
 import ShippingQuoteList from "./ShippingQuoteList.vue";
 
 export default {
   components: {
-    BaseInput,
     BaseButton,
     ShippingQuoteList,
   },
@@ -130,7 +151,7 @@ export default {
       },
       shippingServices: [],
       filteredShippingServices: [],
-      filterCount: 5,
+      filterCount: 3,
       produtos: [
         {
           category: "",
@@ -183,9 +204,34 @@ export default {
       this.produtos.splice(index, 1);
     },
 
+    async handleData() {
+      const requestData = {
+        SellerCEP: this.form.SellerCEP,
+        RecipientCEP: this.form.RecipientCEP,
+        ShipmentInvoiceValue: this.form.declared_value,
+        ShippingServiceCode: null,
+        ShippingItemArray: this.produtos.map((produto) => ({
+          Height: produto.height,
+          Length: produto.length,
+          Quantity: produto.quantity,
+          Weight: produto.Weight,
+          Width: produto.Width,
+          SKU: produto.sku,
+          Category: produto.category,
+        })),
+        RecipientCountry: "BR",
+      };
+
+      const storedData = JSON.parse(localStorage.getItem("shippingData")) || [];
+      storedData.push(requestData);
+
+      localStorage.setItem("shippingData", JSON.stringify(storedData));
+
+      await this.handleSubmit();
+    },
     async handleSubmit() {
       try {
-        const response = await getShippingQuote(this.form);
+        const response = await getShippingQuote();
         if (
           response.ShippingSevicesArray &&
           Array.isArray(response.ShippingSevicesArray)
@@ -212,6 +258,14 @@ export default {
     },
     applyFilter() {
       this.filteredShippingServices = this.shippingServices;
+      if (this.produtos.length >= this.filterCount) {
+        this.$nextTick(() => {
+          const container = document.querySelector(".container-details");
+          if (container) {
+            container.style.overflowY = "auto";
+          }
+        });
+      }
     },
     changeFilterCount(count) {
       this.filterCount = count;
@@ -231,6 +285,7 @@ export default {
 .container-cep {
   display: flex;
   align-items: baseline;
+  justify-content: space-between;
   gap: 8px;
 }
 
@@ -240,72 +295,19 @@ export default {
   flex-wrap: wrap;
   gap: 6px;
   justify-content: space-between;
-  padding: 10px 0 16px 0;
   position: relative;
+  margin-top: 16px;
+  max-height: 500px; /* Altura máxima para permitir o scroll */
+  overflow-y: auto; /* Ativa o scroll vertical */
 }
 
 .button-container {
   text-align: center;
 }
 
-h2 {
-  text-align: left;
-  margin: 0;
-  font-size: 16px;
-}
-
-.container-cotacao {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 20px;
-}
-
 h6 {
   font-size: 14px;
   margin: 16px 0 4px 0;
-}
-
-ul.shipping-list {
-  padding: 0;
-  max-height: 100px;
-  overflow-y: auto;
-  transition: max-height 0.3s ease;
-}
-
-ul.shipping-list.no-scroll {
-  max-height: none;
-  overflow-y: visible;
-}
-
-ul.shipping-list {
-  padding: 0;
-  max-height: 100px;
-  overflow-y: auto;
-  cursor: pointer;
-}
-
-ul.shipping-list::-webkit-scrollbar {
-  width: 8px;
-}
-
-ul.shipping-list::-webkit-scrollbar-thumb {
-  background-color: #028ecc;
-  border-radius: 10px;
-}
-
-ul.shipping-list::-webkit-scrollbar-thumb:hover {
-  background-color: #028ecc;
-}
-
-ul.shipping-list::-webkit-scrollbar-track {
-  background-color: #f1f1f1;
-  border-radius: 10px;
-}
-
-li {
-  list-style: none;
-  text-align: left;
 }
 
 .delete-button {
@@ -315,7 +317,7 @@ li {
   background-size: cover;
   background-repeat: no-repeat;
   position: absolute;
-  top: 4px;
+  top: 8px;
   right: 0;
   border: none;
   padding: 5px 0;
@@ -324,14 +326,63 @@ li {
   background-color: transparent;
 }
 
+.container-input {
+  display: inline-flex;
+  flex-direction: column;
+  text-align: left;
+  width: 47%;
+}
+
+.container-input-small {
+  display: inline-flex;
+  flex-direction: column;
+  text-align: left;
+  width: 20%;
+}
+
+.input-wrapper {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  width: 100%;
+  align-self: end;
+}
+
+label {
+  font-size: 12px;
+  margin: 8px 0 4px 0;
+}
+
+input {
+  background: #f1f5f9;
+  border-radius: 4px;
+  border: none;
+  padding: 8px;
+  font-size: 14px;
+  outline: none;
+}
+
+input:focus {
+  outline: 1px solid #028ecc;
+}
+
+.normal {
+  margin-bottom: 8px;
+}
+
 @media (max-width: 768px) {
   .container-cep {
     flex-direction: column;
   }
-}
-
-@media (min-width: 1080px) {
-  .container-details {
+  input {
+    font-size: 12px;
+  }
+  .container-input-small,
+  .container-input {
+    width: 100%;
+  }
+  label {
+    font-size: 10px;
   }
 }
 </style>

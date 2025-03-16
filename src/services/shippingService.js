@@ -5,7 +5,7 @@ export const getShippingQuote = async (data) => {
     const response = await axios.post("/shipping/quote", data, {
       headers: {
         "Content-Type": "application/json",
-        token: "AAABBB2222CCC222DD222",
+        token: "B361B7C6R2FD1R4410RBE95RF4F455B8AB96",
       },
     });
     return response.data;

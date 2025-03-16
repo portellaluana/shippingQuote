@@ -1,18 +1,36 @@
 <template>
   <div v-if="shippingServices.length" class="container-cotacao">
     <h2>Últimas Cotações de Frete</h2>
-    <ul
-      class="shipping-list"
-      :style="{
-        maxHeight: shippingServices.length > 5 ? '100px' : 'auto',
-        overflowY: shippingServices.length > 5 ? 'auto' : 'visible',
-      }"
-    >
-      <li v-for="(service, index) in shippingServices" :key="index">
-        {{ index + 1 }}. {{ service.index }}{{ service.ServiceDescription }}: R$
-        {{ service.ShippingPrice }}
-      </li>
-    </ul>
+    <div>
+      <ul
+        class="shipping-list"
+        :style="{
+          maxHeight: shippingServices.length >= 3 ? '100px' : 'auto',
+          overflowY: shippingServices.length >= 3 ? 'auto' : 'visible',
+        }"
+      >
+        <li
+          v-for="(service, index) in shippingServices"
+          :key="service.id"
+          :class="{ 'bg-white': index % 2 === 0, 'bg-gray': index % 2 !== 0 }"
+        >
+          {{ index + 1 }}. {{ service.index }} ORIGEM:
+          <span>
+            {{ localShippingData[index]?.SellerCEP || "Não disponível" }}
+          </span>
+          DESTINO:
+          <span>
+            {{ localShippingData[index]?.RecipientCEP || "Não disponível" }}
+          </span>
+          TIPO:
+          <span>
+            {{ service.ServiceDescription }}
+          </span>
+          VALOR:
+          <span> R$ {{ service.ShippingPrice }} </span>
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 
@@ -23,13 +41,58 @@ export default {
       type: Array,
       required: true,
     },
+    shippingData: {
+      type: Array,
+      required: true,
+    },
+  },
+  data() {
+    return {
+      localShippingData: [],
+    };
+  },
+  created() {
+    this.handleData();
+  },
+
+  watch: {
+    shippingServices: {
+      handler() {
+        this.handleData();
+      },
+      deep: true,
+    },
+    shippingData: {
+      handler() {
+        this.handleData();
+      },
+      deep: true,
+    },
+  },
+
+  methods: {
+    handleData() {
+      const storedData = JSON.parse(localStorage.getItem("shippingData")) || [];
+      if (storedData.length > 0) {
+        this.localShippingData = storedData;
+      } else {
+        this.localShippingData = [];
+      }
+      console.log("data: ", this.localShippingData);
+    },
   },
 };
 </script>
 
 <style scoped>
+h2 {
+  text-align: left;
+  margin: 0;
+  font-size: 16px;
+}
+
 .container-cotacao {
-  display: flex;
+  display: block;
   align-items: center;
   justify-content: space-between;
   margin-top: 20px;
@@ -63,5 +126,20 @@ export default {
 li {
   list-style: none;
   text-align: left;
+  font-size: 14px;
+  margin-bottom: 8px;
+  padding: 8px;
+}
+
+span {
+  font-weight: 600;
+}
+
+.bg-white {
+  background-color: white;
+}
+
+.bg-gray {
+  background-color: #f0f0f0;
 }
 </style>
