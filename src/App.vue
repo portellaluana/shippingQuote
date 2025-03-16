@@ -29,6 +29,12 @@ export default {
 </script>
 
 <style>
+body {
+  background-image: url("/public/background.svg");
+  background-size: cover;
+  background-position: top center;
+  background-repeat: no-repeat;
+}
 #app {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
@@ -37,10 +43,7 @@ export default {
   text-align: center;
   color: #3c4151;
   min-height: 100vh;
-  background-image: url("/public/background.svg");
-  background-size: cover;
-  background-position: top center;
-  background-repeat: no-repeat;
+  /* background: linear-gradient(257.13deg, #02aeef 0%, #2a3580 88.14%); */
   position: relative;
   margin: 0;
   padding: 0;

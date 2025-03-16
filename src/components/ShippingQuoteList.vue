@@ -22,7 +22,7 @@
           <span>
             {{ localShippingData[index]?.RecipientCEP || "Não disponível" }}
           </span>
-          TIPO:
+          ENVIO:
           <span>
             {{ service.ServiceDescription }}
           </span>

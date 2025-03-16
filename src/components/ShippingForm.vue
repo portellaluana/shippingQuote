@@ -1,15 +1,16 @@
 <template>
   <div id="shippingForm">
     <form @submit.prevent="handleData">
-      <div class="container-cep">
+      <div v-if="tipo === 'Cliente'">
+        <div class="container-cliente">
+          <label for="trackingNumber">Código de rastreio*</label>
+          <input v-model="form.TrackingNumber" id="trackingNumber" />
+        </div>
+      </div>
+      <div class="container-cep" v-if="tipo === 'Lojista'">
         <div class="container-input">
           <label for="SellerCEP">Origem*</label>
-          <input
-            v-if="tipo === 'Lojista'"
-            v-model="form.SellerCEP"
-            class="normal"
-            id="SellerCEP"
-          />
+          <input v-model="form.SellerCEP" class="normal" id="SellerCEP" />
         </div>
         <div class="container-input">
           <label for="destino">Destino*</label>
@@ -45,22 +46,38 @@
         >
           <div class="container-input-small">
             <label for="categoria">Categoria</label>
-            <input v-model="produto.category" type="string" id="categoria" />
+            <input
+              class="input-small"
+              v-model="produto.category"
+              type="string"
+              id="categoria"
+            />
           </div>
 
           <div class="container-input-small">
             <label for="sku">SKU</label>
-            <input v-model="produto.sku" type="string" id="sku" />
+            <input
+              class="input-small"
+              v-model="produto.sku"
+              type="string"
+              id="sku"
+            />
           </div>
 
           <div class="container-input-small">
             <label for="quantidade">Quantidade</label>
-            <input v-model="produto.quantity" type="number" id="quantidade" />
+            <input
+              class="input-small"
+              v-model="produto.quantity"
+              type="number"
+              id="quantidade"
+            />
           </div>
 
           <div class="container-input-small">
             <label for="peso">Peso</label>
             <input
+              class="input-small"
               v-model="produto.Weight"
               type="number"
               placeholder="(kg)"
@@ -70,18 +87,20 @@
           </div>
 
           <div class="container-input-small">
-            <label for="volume">Volume</label>
+            <label for="largura">Largura</label>
             <input
+              class="input-small"
               v-model="produto.Width"
               type="number"
               placeholder="(cm)"
-              id="volume"
+              id="largura"
             />
           </div>
 
           <div class="container-input-small">
             <label for="altura">Altura</label>
             <input
+              class="input-small"
               v-model="produto.height"
               type="number"
               placeholder="(cm)"
@@ -92,6 +111,7 @@
           <div class="container-input-small">
             <label for="comprimento">Comprimento*</label>
             <input
+              class="input-small"
               v-model="produto.length"
               type="number"
               placeholder="(cm)"
@@ -107,20 +127,41 @@
         </div>
       </div>
 
-      <div class="button-container">
+      <div class="button-container" v-if="tipo === 'Lojista'">
         <BaseButton type="submit" class="primary-btn">Fazer cotação</BaseButton>
       </div>
-      <BaseButton class="secondary-btn" @click.prevent="adicionarProduto">
+      <BaseButton
+        class="secondary-btn"
+        @click.prevent="adicionarProduto"
+        v-if="tipo === 'Lojista'"
+      >
         Adicionar mais produtos
       </BaseButton>
+      <BaseButton
+        @click.prevent="handleTracking"
+        class="primary-btn"
+        v-if="tipo === 'Cliente'"
+      >
+        Rastrear pedido
+      </BaseButton>
+      <TrackingEventsList
+        :trackingEvents="trackingEvents"
+        v-if="trackingEvents.length"
+      />
     </form>
 
-    <ShippingQuoteList :shippingServices="filteredShippingServices" />
+    <ShippingQuoteList
+      :shippingServices="filteredShippingServices"
+      v-if="tipo === 'Lojista'"
+    />
   </div>
 </template>
 
 <script>
 import { getShippingQuote } from "../services/shippingService";
+import { getTrackingInfo } from "../services/shippingService";
+import TrackingEventsList from "./TrackingEventsList.vue";
+
 import BaseButton from "./BaseButton.vue";
 import ShippingQuoteList from "./ShippingQuoteList.vue";
 
@@ -128,6 +169,7 @@ export default {
   components: {
     BaseButton,
     ShippingQuoteList,
+    TrackingEventsList,
   },
   props: {
     tipo: {
@@ -165,6 +207,7 @@ export default {
         },
       ],
       isAddingProduct: false,
+      trackingEvents: [],
     };
   },
 
@@ -224,11 +267,18 @@ export default {
 
       const storedData = JSON.parse(localStorage.getItem("shippingData")) || [];
       storedData.push(requestData);
-
+      storedData.reverse();
       localStorage.setItem("shippingData", JSON.stringify(storedData));
 
       await this.handleSubmit();
     },
+
+    async handleTracking() {
+      const response = await getTrackingInfo();
+      const trackingEvents = response.TrackingEvents;
+      this.trackingEvents = trackingEvents;
+    },
+
     async handleSubmit() {
       try {
         const response = await getShippingQuote();
@@ -252,6 +302,7 @@ export default {
         JSON.parse(localStorage.getItem("shippingQuotes")) || [];
       storedQuotes.unshift(...newShippingServices);
       const limitedQuotes = storedQuotes.slice(0, 100);
+      limitedQuotes.reverse();
       localStorage.setItem("shippingQuotes", JSON.stringify(limitedQuotes));
       this.shippingServices = limitedQuotes;
       this.applyFilter();
@@ -288,17 +339,22 @@ export default {
   justify-content: space-between;
   gap: 8px;
 }
+.container-cliente {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
 
 .container-details {
   display: flex;
   width: 100%;
-  flex-wrap: wrap;
   gap: 6px;
   justify-content: space-between;
   position: relative;
   margin-top: 16px;
-  max-height: 500px; /* Altura máxima para permitir o scroll */
-  overflow-y: auto; /* Ativa o scroll vertical */
+  max-height: 500px;
+  overflow-y: auto;
+  padding: 1px;
 }
 
 .button-container {
@@ -337,7 +393,6 @@ h6 {
   display: inline-flex;
   flex-direction: column;
   text-align: left;
-  width: 20%;
 }
 
 .input-wrapper {
@@ -383,6 +438,14 @@ input:focus {
   }
   label {
     font-size: 10px;
+  }
+  .container-details {
+    flex-wrap: wrap;
+  }
+}
+@media (min-width: 768px) {
+  .input-small {
+    width: 82%;
   }
 }
 </style>
