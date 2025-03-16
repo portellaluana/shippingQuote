@@ -21,8 +21,6 @@
           :key="index"
           class="container-details"
           :style="index !== 0 ? { borderTop: '1px solid #028ecc' } : {}"
-          @mouseenter="produto.showDeleteButton = true"
-          @mouseleave="produto.showDeleteButton = false"
         >
           <BaseInput
             v-model="produto.category"
@@ -79,12 +77,10 @@
           />
 
           <button
-            v-if="index !== 0 && produto.showDeleteButton"
+            v-if="index !== 0"
             @click="removerProduto(index)"
             class="delete-button"
-          >
-            x
-          </button>
+          />
         </div>
       </div>
 
@@ -96,7 +92,6 @@
       </div>
     </form>
 
-    <!-- Use o novo componente para exibir as cotações de frete -->
     <ShippingQuoteList :shippingServices="filteredShippingServices" />
   </div>
 </template>
@@ -146,7 +141,6 @@ export default {
           height: "",
           length: "",
           declared_value: "",
-          showDeleteButton: false,
         },
       ],
       isAddingProduct: false,
@@ -178,7 +172,6 @@ export default {
         height: "",
         length: "",
         declared_value: "",
-        showDeleteButton: false,
       });
 
       setTimeout(() => {
@@ -316,19 +309,19 @@ li {
 }
 
 .delete-button {
+  width: 12px;
+  height: 12px;
+  background-image: url("@/assets/delete-button.png");
+  background-size: cover;
+  background-repeat: no-repeat;
   position: absolute;
-  top: 2px;
-  right: 2px;
-  background-color: #3c4151;
-  color: white;
+  top: 4px;
+  right: 0;
   border: none;
-  padding: 5px 10px;
+  padding: 5px 0;
   cursor: pointer;
   border-radius: 5px;
-}
-
-.delete-button:hover {
-  background-color: #25272f;
+  background-color: transparent;
 }
 
 @media (max-width: 768px) {
