@@ -21,6 +21,8 @@
           :key="index"
           class="container-details"
           :style="index !== 0 ? { borderTop: '1px solid #028ecc' } : {}"
+          @mouseenter="produto.showDeleteButton = true"
+          @mouseleave="produto.showDeleteButton = false"
         >
           <BaseInput
             v-model="produto.category"
@@ -75,6 +77,14 @@
             placeholder="R$"
             classe="small"
           />
+
+          <button
+            v-if="index !== 0 && produto.showDeleteButton"
+            @click="removerProduto(index)"
+            class="delete-button"
+          >
+            x
+          </button>
         </div>
       </div>
 
@@ -150,6 +160,7 @@ export default {
           height: "",
           length: "",
           declared_value: "",
+          showDeleteButton: false,
         },
       ],
       isAddingProduct: false,
@@ -172,8 +183,6 @@ export default {
       if (this.isAddingProduct) return;
       this.isAddingProduct = true;
 
-      console.log("Adicionando produto");
-
       this.produtos.push({
         category: "",
         sku: "",
@@ -183,6 +192,7 @@ export default {
         height: "",
         length: "",
         declared_value: "",
+        showDeleteButton: false,
       });
 
       setTimeout(() => {
@@ -190,11 +200,13 @@ export default {
       }, 200);
     },
 
+    removerProduto(index) {
+      this.produtos.splice(index, 1);
+    },
+
     async handleSubmit() {
       try {
         const response = await getShippingQuote(this.form);
-        console.log(response);
-
         if (
           response.ShippingSevicesArray &&
           Array.isArray(response.ShippingSevicesArray)
@@ -249,6 +261,7 @@ export default {
   gap: 6px;
   justify-content: space-between;
   padding: 10px 0 16px 0;
+  position: relative;
 }
 
 .button-container {
@@ -292,12 +305,6 @@ ul.shipping-list {
   cursor: pointer;
 }
 
-ul.shipping-list {
-  padding: 0;
-  max-height: 100px;
-  overflow-y: auto;
-}
-
 ul.shipping-list::-webkit-scrollbar {
   width: 8px;
 }
@@ -319,6 +326,22 @@ ul.shipping-list::-webkit-scrollbar-track {
 li {
   list-style: none;
   text-align: left;
+}
+
+.delete-button {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  background-color: #3c4151;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.delete-button:hover {
+  background-color: #25272f;
 }
 
 @media (max-width: 768px) {
