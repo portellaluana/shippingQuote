@@ -73,10 +73,6 @@ export default {
   background-color: #f1f5f9;
 }
 
-.tab-content {
-  padding-top: 16px;
-}
-
 @media (max-width: 768px) {
   .tabs {
     min-width: 300px;

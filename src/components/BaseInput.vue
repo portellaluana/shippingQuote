@@ -1,11 +1,10 @@
 <template>
-  <div class="input-wrapper">
+  <div class="input-wrapper" :class="classe">
     <label>{{ label }}</label>
     <input
       :type="type"
       :placeholder="placeholder"
       :value="value"
-      :class="classe"
       @input="$emit('input', $event.target.value)"
     />
   </div>
@@ -39,8 +38,8 @@ export default {
 }
 
 label {
-  font-size: 14px;
-  margin: 16px 0 4px 0;
+  font-size: 12px;
+  margin: 8px 0 4px 0;
 }
 
 input {
@@ -52,31 +51,34 @@ input {
   outline: none;
 }
 
-.small {
-  width: 90%;
-}
-
 input:focus {
   outline: 1px solid #028ecc;
 }
 
+.normal {
+  margin-bottom: 8px;
+}
 @media (max-width: 768px) {
   input {
     font-size: 12px;
   }
   .small {
-    width: 95%;
+    width: 48%;
+  }
+  label {
+    font-size: 10px;
   }
 }
 
 @media (min-width: 768px) {
   .small {
-    width: 86%;
+    width: 48%;
   }
 }
+
 @media (min-width: 1080px) {
   .small {
-    width: 90%;
+    width: 20%;
   }
 }
 </style>

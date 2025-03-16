@@ -1,36 +1,88 @@
 <template>
   <div id="shippingForm">
     <form @submit.prevent="handleSubmit">
-      <div class="container">
+      <div class="container-cep">
         <BaseInput
           v-if="tipo === 'Lojista'"
           v-model="form.SellerCEP"
-          placeholder="CEP de Origem"
-          label="Origem"
+          label="Origem*"
           classe="normal"
         />
         <BaseInput
           v-model="form.RecipientCEP"
-          placeholder="CEP de Destino"
-          label="Destino"
+          label="Destino*"
           classe="normal"
         />
       </div>
 
-      <div v-if="tipo === 'Lojista'" class="container">
-        <BaseInput
-          v-for="field in lojistaFields"
-          :key="field.name"
-          v-model="form[field.name]"
-          :type="field.type"
-          :placeholder="field.placeholder"
-          :label="field.label"
-          :classe="field.classe"
-        />
+      <div v-if="tipo === 'Lojista'">
+        <div
+          v-for="(produto, index) in produtos"
+          :key="index"
+          class="container-details"
+          :style="index !== 0 ? { borderTop: '1px solid #028ecc' } : {}"
+        >
+          <BaseInput
+            v-model="produto.category"
+            type="string"
+            label="Categoria"
+            classe="small"
+          />
+          <BaseInput
+            v-model="produto.sku"
+            type="string"
+            label="SKU"
+            classe="small"
+          />
+          <BaseInput
+            v-model="produto.quantity"
+            type="number"
+            label="Quantidade"
+            classe="small"
+          />
+          <BaseInput
+            v-model="produto.Weight"
+            type="number"
+            placeholder="(kg)"
+            label="Peso*"
+            classe="small"
+          />
+          <BaseInput
+            v-model="produto.Width"
+            type="number"
+            placeholder="(cm)"
+            label="Volume*"
+            classe="small"
+          />
+          <BaseInput
+            v-model="produto.height"
+            label="Altura*"
+            type="number"
+            placeholder="(cm)"
+            classe="small"
+          />
+          <BaseInput
+            v-model="produto.length"
+            label="Comprimento*"
+            type="number"
+            placeholder="(cm)"
+            classe="small"
+          />
+          <BaseInput
+            label="Valor*"
+            v-model="produto.declared_value"
+            type="number"
+            placeholder="R$"
+            classe="small"
+          />
+        </div>
       </div>
 
       <div class="button-container">
-        <BaseButton type="submit">Fazer cotação</BaseButton>
+        <BaseButton class="secondary-btn" @click.prevent="adicionarProduto">
+          Adicionar mais produtos
+        </BaseButton>
+        <BaseButton type="submit" class="primary-btn">Fazer cotação</BaseButton>
       </div>
     </form>
 
@@ -81,56 +133,61 @@ export default {
         Height: "",
         Length: "",
         declared_value: "",
+        category: "",
+        sku: "",
+        quantity: "",
       },
       shippingServices: [],
       filteredShippingServices: [],
       filterCount: 5,
-      lojistaFields: [
+      produtos: [
         {
-          name: "Weight",
-          type: "number",
-          placeholder: "Peso (kg)",
-          label: "Peso",
-          classe: "small",
-        },
-        {
-          name: "Width",
-          type: "number",
-          placeholder: "Largura (cm)",
-          label: "Volume",
-          classe: "small",
-        },
-        {
-          name: "Height",
-          type: "number",
-          placeholder: "Altura (cm)",
-          classe: "small",
-        },
-        {
-          name: "Length",
-          type: "number",
-          placeholder: "Comprimento (cm)",
-          classe: "small",
-        },
-        {
-          name: "declared_value",
-          type: "number",
-          placeholder: "Valor em Reais",
-          label: "Valor",
-          classe: "small",
+          category: "",
+          sku: "",
+          quantity: "",
+          Weight: "",
+          Width: "",
+          height: "",
+          length: "",
+          declared_value: "",
         },
       ],
+      isAddingProduct: false,
     };
   },
+
   created() {
     this.loadStoredQuotes();
   },
+
   methods: {
     loadStoredQuotes() {
       const storedQuotes =
         JSON.parse(localStorage.getItem("shippingQuotes")) || [];
       this.shippingServices = storedQuotes;
       this.applyFilter();
+    },
+
+    adicionarProduto() {
+      if (this.isAddingProduct) return;
+      this.isAddingProduct = true;
+
+      console.log("Adicionando produto");
+
+      this.produtos.push({
+        category: "",
+        sku: "",
+        quantity: "",
+        Weight: "",
+        Width: "",
+        height: "",
+        length: "",
+        declared_value: "",
+      });
+
+      setTimeout(() => {
+        this.isAddingProduct = false;
+      }, 200);
     },
 
     async handleSubmit() {
@@ -153,7 +210,6 @@ export default {
         console.error("Erro ao fazer cotação de frete:", error);
       }
     },
-
     storeShippingServices(newShippingServices) {
       const storedQuotes =
         JSON.parse(localStorage.getItem("shippingQuotes")) || [];
@@ -163,11 +219,9 @@ export default {
       this.shippingServices = limitedQuotes;
       this.applyFilter();
     },
-
     applyFilter() {
       this.filteredShippingServices = this.shippingServices;
     },
-
     changeFilterCount(count) {
       this.filterCount = count;
       this.applyFilter();
@@ -182,15 +236,23 @@ export default {
   border-radius: 8px;
 }
 
-.container {
+.container-cep {
   display: flex;
-  gap: 8px;
   align-items: baseline;
+  gap: 8px;
+}
+
+.container-details {
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: space-between;
+  padding: 10px 0 16px 0;
 }
 
 .button-container {
   text-align: center;
-  margin-top: 16px;
 }
 
 h2 {
@@ -260,8 +322,13 @@ li {
 }
 
 @media (max-width: 768px) {
-  .container {
+  .container-cep {
     flex-direction: column;
+  }
+}
+
+@media (min-width: 1080px) {
+  .container-details {
   }
 }
 </style>
