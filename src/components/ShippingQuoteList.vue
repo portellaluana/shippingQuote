@@ -1,96 +1,58 @@
 <template>
-  <div v-if="shippingServices.length" class="container-cotacao">
-    <h2>Últimas Cotações de Frete</h2>
+  <div class="container-cotacao">
     <div>
-      <ul
-        class="shipping-list"
-        :style="{
-          maxHeight: shippingServices.length >= 3 ? '100px' : 'auto',
-          overflowY: shippingServices.length >= 3 ? 'auto' : 'visible',
-        }"
+      <table
+        class="shipping-table"
+        v-if="filteredShippingServices && filteredShippingServices.length"
       >
-        <li
-          v-for="(service, index) in shippingServices"
-          :key="service.id"
-          :class="{ 'bg-white': index % 2 === 0, 'bg-gray': index % 2 !== 0 }"
-        >
-          {{ index + 1 }}. {{ service.index }} ORIGEM:
-          <span>
-            {{ localShippingData[index]?.SellerCEP || "Não disponível" }}
-          </span>
-          DESTINO:
-          <span>
-            {{ localShippingData[index]?.RecipientCEP || "Não disponível" }}
-          </span>
-          ENVIO:
-          <span>
-            {{ service.ServiceDescription }}
-          </span>
-          VALOR:
-          <span> R$ {{ service.ShippingPrice }} </span>
-        </li>
-      </ul>
+        <thead>
+          <tr>
+            <th>Transportadora</th>
+            <th>Serviço</th>
+            <th>Prazo</th>
+            <th>Preço</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(service, index) in filteredShippingServices" :key="index">
+            <td>{{ service.Carrier }}</td>
+            <td>{{ service.ServiceDescription }}</td>
+            <td>{{ service.DeliveryTime }} dias</td>
+            <td>R$ {{ service.ShippingPrice }}</td>
+            <td><BaseButton class="secondary-btn">Escolher</BaseButton></td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </template>
 
 <script>
+import BaseButton from "./BaseButton.vue";
+
 export default {
+  components: {
+    BaseButton,
+  },
   props: {
     shippingServices: {
       type: Array,
       required: true,
-    },
-    shippingData: {
-      type: Array,
-      required: true,
+      default: () => [],
     },
   },
-  data() {
-    return {
-      localShippingData: [],
-    };
-  },
-  created() {
-    this.handleData();
-  },
-
-  watch: {
-    shippingServices: {
-      handler() {
-        this.handleData();
-      },
-      deep: true,
-    },
-    shippingData: {
-      handler() {
-        this.handleData();
-      },
-      deep: true,
-    },
-  },
-
-  methods: {
-    handleData() {
-      const storedData = JSON.parse(localStorage.getItem("shippingData")) || [];
-      if (storedData.length > 0) {
-        this.localShippingData = storedData;
-      } else {
-        this.localShippingData = [];
-      }
-      console.log("data: ", this.localShippingData);
+  computed: {
+    filteredShippingServices() {
+      return this.shippingServices.filter(
+        (service) => "DeliveryTime" in service && "ShippingPrice" in service
+      );
     },
   },
 };
 </script>
 
 <style scoped>
-h2 {
-  text-align: left;
-  margin: 0;
-  font-size: 16px;
-}
-
 .container-cotacao {
   display: block;
   align-items: center;
@@ -98,48 +60,44 @@ h2 {
   margin-top: 20px;
 }
 
-.shipping-list {
-  padding: 0;
-  max-height: 100px;
-  overflow-y: auto;
-  cursor: pointer;
+.shipping-table {
+  width: 100%;
+  border-collapse: collapse;
 }
 
-.shipping-list::-webkit-scrollbar {
-  width: 8px;
-}
-
-.shipping-list::-webkit-scrollbar-thumb {
-  background-color: #028ecc;
-  border-radius: 10px;
-}
-
-.shipping-list::-webkit-scrollbar-thumb:hover {
-  background-color: #028ecc;
-}
-
-.shipping-list::-webkit-scrollbar-track {
-  background-color: #f1f1f1;
-  border-radius: 10px;
-}
-
-li {
-  list-style: none;
+.shipping-table th,
+.shipping-table td {
+  padding: 12px;
   text-align: left;
-  font-size: 14px;
-  margin-bottom: 8px;
-  padding: 8px;
+  border-bottom: 1px solid #c8c8c8;
 }
 
-span {
+.shipping-table th {
+  background-color: #f1f5f9;
+  color: #3c4151;
+}
+
+.shipping-table td {
   font-weight: 600;
 }
 
-.bg-white {
-  background-color: white;
+.shipping-table th {
+  border-bottom: none;
 }
 
-.bg-gray {
-  background-color: #f0f0f0;
+.shipping-table tr:last-child td {
+  border-bottom: none;
+}
+
+.shipping-table tr:nth-child(even) {
+  background-color: transparent;
+}
+
+.shipping-table tbody tr:hover {
+  background-color: transparent;
+}
+
+.secondary-btn {
+  cursor: pointer;
 }
 </style>

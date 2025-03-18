@@ -1,32 +1,19 @@
 <template>
   <div id="app">
-    <BaseTabs v-model="activeTab" :tabs="['Lojista', 'Cliente']">
-      <template #Lojista>
-        <ShippingForm tipo="Lojista" />
-      </template>
-      <template #Cliente>
-        <ShippingForm tipo="Cliente" />
-      </template>
-    </BaseTabs>
+    <ShippingForm />
   </div>
 </template>
 
 <script>
-import BaseTabs from "./components/BaseTabs.vue";
 import ShippingForm from "./components/ShippingForm.vue";
 
 export default {
   components: {
-    BaseTabs,
     ShippingForm,
-  },
-  data() {
-    return {
-      activeTab: "Lojista",
-    };
   },
 };
 </script>
+
 
 <style>
 body {

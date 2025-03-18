@@ -1,13 +1,8 @@
 <template>
   <div id="shippingForm">
     <form @submit.prevent="handleData">
-      <div v-if="tipo === 'Cliente'">
-        <div class="container-cliente">
-          <label for="trackingNumber">Código de rastreio*</label>
-          <input v-model="form.TrackingNumber" id="trackingNumber" />
-        </div>
-      </div>
-      <div class="container-cep" v-if="tipo === 'Lojista'">
+      <!-- Formulário de entrada de dados -->
+      <div class="container-cep">
         <div class="container-input">
           <label for="SellerCEP">Origem*</label>
           <input v-model="form.SellerCEP" class="normal" id="SellerCEP" />
@@ -21,7 +16,6 @@
             id="destino"
           />
         </div>
-
         <div class="container-input">
           <label for="Valor">Valor*</label>
           <input
@@ -33,7 +27,7 @@
         </div>
       </div>
 
-      <div v-if="tipo === 'Lojista'">
+      <div>
         <div
           v-for="(produto, index) in produtos"
           :key="index"
@@ -53,7 +47,6 @@
               id="categoria"
             />
           </div>
-
           <div class="container-input-small">
             <label for="sku">SKU</label>
             <input
@@ -63,7 +56,6 @@
               id="sku"
             />
           </div>
-
           <div class="container-input-small">
             <label for="quantidade">Quantidade</label>
             <input
@@ -73,7 +65,6 @@
               id="quantidade"
             />
           </div>
-
           <div class="container-input-small">
             <label for="peso">Peso</label>
             <input
@@ -85,7 +76,6 @@
               id="peso"
             />
           </div>
-
           <div class="container-input-small">
             <label for="largura">Largura</label>
             <input
@@ -96,7 +86,6 @@
               id="largura"
             />
           </div>
-
           <div class="container-input-small">
             <label for="altura">Altura</label>
             <input
@@ -107,7 +96,6 @@
               id="altura"
             />
           </div>
-
           <div class="container-input-small">
             <label for="comprimento">Comprimento*</label>
             <input
@@ -118,7 +106,6 @@
               id="comprimento"
             />
           </div>
-
           <button
             v-if="index !== 0"
             @click="removerProduto(index)"
@@ -127,41 +114,19 @@
         </div>
       </div>
 
-      <div class="button-container" v-if="tipo === 'Lojista'">
+      <div class="button-container">
         <BaseButton type="submit" class="primary-btn">Fazer cotação</BaseButton>
       </div>
-      <BaseButton
-        class="secondary-btn"
-        @click.prevent="adicionarProduto"
-        v-if="tipo === 'Lojista'"
+      <BaseButton class="secondary-btn" @click.prevent="adicionarProduto"
+        >Adicionar mais produtos</BaseButton
       >
-        Adicionar mais produtos
-      </BaseButton>
-      <BaseButton
-        @click.prevent="handleTracking"
-        class="primary-btn"
-        v-if="tipo === 'Cliente'"
-      >
-        Rastrear pedido
-      </BaseButton>
-      <TrackingEventsList
-        :trackingEvents="trackingEvents"
-        v-if="trackingEvents.length"
-      />
     </form>
-
-    <ShippingQuoteList
-      :shippingServices="filteredShippingServices"
-      v-if="tipo === 'Lojista'"
-    />
+    <ShippingQuoteList :shippingServices="shippingServices" />
   </div>
 </template>
 
 <script>
 import { getShippingQuote } from "../services/shippingService";
-import { getTrackingInfo } from "../services/shippingService";
-import TrackingEventsList from "./TrackingEventsList.vue";
-
 import BaseButton from "./BaseButton.vue";
 import ShippingQuoteList from "./ShippingQuoteList.vue";
 
@@ -169,60 +134,33 @@ export default {
   components: {
     BaseButton,
     ShippingQuoteList,
-    TrackingEventsList,
-  },
-  props: {
-    tipo: {
-      type: String,
-      required: true,
-    },
   },
   data() {
     return {
       form: {
-        SellerCEP: "",
-        RecipientCEP: "",
-        Weight: "",
-        Width: "",
-        Height: "",
-        Length: "",
-        declared_value: "",
-        category: "",
-        sku: "",
-        quantity: "",
+        SellerCEP: "88303001",
+        RecipientCEP: "88032001",
+        declared_value: "400",
       },
       shippingServices: [],
-      filteredShippingServices: [],
-      filterCount: 3,
+
       produtos: [
         {
-          category: "",
-          sku: "",
-          quantity: "",
-          Weight: "",
-          Width: "",
-          height: "",
-          length: "",
-          declared_value: "",
+          Weight: "1",
+          Width: "10",
+          Height: "20",
+          Length: "10",
+          declared_value: "400",
+          category: "aaa",
+          sku: "sss",
+          quantity: "1",
         },
       ],
       isAddingProduct: false,
-      trackingEvents: [],
     };
   },
 
-  created() {
-    this.loadStoredQuotes();
-  },
-
   methods: {
-    loadStoredQuotes() {
-      const storedQuotes =
-        JSON.parse(localStorage.getItem("shippingQuotes")) || [];
-      this.shippingServices = storedQuotes;
-      this.applyFilter();
-    },
-
     adicionarProduto() {
       if (this.isAddingProduct) return;
       this.isAddingProduct = true;
@@ -233,7 +171,7 @@ export default {
         quantity: "",
         Weight: "",
         Width: "",
-        height: "",
+        height: "10",
         length: "",
         declared_value: "",
       });
@@ -265,62 +203,11 @@ export default {
         RecipientCountry: "BR",
       };
 
-      const storedData = JSON.parse(localStorage.getItem("shippingData")) || [];
-      storedData.push(requestData);
-      storedData.reverse();
-      localStorage.setItem("shippingData", JSON.stringify(storedData));
+      const response = await getShippingQuote(requestData);
 
-      await this.handleSubmit();
-    },
+      this.shippingServices = response.ShippingSevicesArray || [];
 
-    async handleTracking() {
-      const response = await getTrackingInfo();
-      const trackingEvents = response.TrackingEvents;
-      this.trackingEvents = trackingEvents;
-    },
-
-    async handleSubmit() {
-      try {
-        const response = await getShippingQuote();
-        if (
-          response.ShippingSevicesArray &&
-          Array.isArray(response.ShippingSevicesArray)
-        ) {
-          const newShippingServices = response.ShippingSevicesArray;
-          this.storeShippingServices(newShippingServices);
-        } else {
-          console.error(
-            "Dados de cotação de frete não encontrados ou formato inválido."
-          );
-        }
-      } catch (error) {
-        console.error("Erro ao fazer cotação de frete:", error);
-      }
-    },
-    storeShippingServices(newShippingServices) {
-      const storedQuotes =
-        JSON.parse(localStorage.getItem("shippingQuotes")) || [];
-      storedQuotes.unshift(...newShippingServices);
-      const limitedQuotes = storedQuotes.slice(0, 100);
-      limitedQuotes.reverse();
-      localStorage.setItem("shippingQuotes", JSON.stringify(limitedQuotes));
-      this.shippingServices = limitedQuotes;
-      this.applyFilter();
-    },
-    applyFilter() {
-      this.filteredShippingServices = this.shippingServices;
-      if (this.produtos.length >= this.filterCount) {
-        this.$nextTick(() => {
-          const container = document.querySelector(".container-details");
-          if (container) {
-            container.style.overflowY = "auto";
-          }
-        });
-      }
-    },
-    changeFilterCount(count) {
-      this.filterCount = count;
-      this.applyFilter();
+      console.log("response: ", response);
     },
   },
 };
@@ -331,6 +218,7 @@ export default {
 #shippingForm {
   padding: 20px;
   border-radius: 8px;
+  background-color: white;
 }
 
 .container-cep {

@@ -26,7 +26,7 @@ export default {
 
   color: white;
   width: 100%;
-  margin-top: 16px;
+  margin: 16px 0 8px 0;
 }
 .primary-btn:hover {
   background-color: #028ecc;
@@ -46,8 +46,13 @@ export default {
   color: #028ecc;
   display: flex;
   align-items: center;
-  margin-top: 8px;
 }
+.secondary-btn:hover {
+  background-color: #028ecc;
+  border: 1px solid #028ecc;
+  color: white;
+}
+
 @media (max-width: 768px) {
   .secondary-btn {
     width: 100%;
