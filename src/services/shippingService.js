@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const getShippingQuote = async (data) => {
+export const postShippingQuote = async (data) => {
   try {
     const response = await axios.post("/shipping/quote", data, {
       headers: {
@@ -15,9 +15,9 @@ export const getShippingQuote = async (data) => {
   }
 };
 
-export const getTrackingInfo = async (data) => {
+export const getCepInfo = async (cep) => {
   try {
-    const response = await axios.post("/tracking/trackinginfo", data, {
+    const response = await axios.get(`/CEP/Address/${cep}`, {
       headers: {
         "Content-Type": "application/json",
         token: "B361B7C6R2FD1R4410RBE95RF4F455B8AB96",
@@ -25,20 +25,6 @@ export const getTrackingInfo = async (data) => {
     });
     return response.data;
   } catch (error) {
-    console.error("Erro ao rastrear pedido:", error);
-  }
-};
-
-export const getCepInfo = async (data) => {
-  try {
-    const response = await axios.post("/CEP/Address/", data, {
-      headers: {
-        "Content-Type": "application/json",
-        token: "B361B7C6R2FD1R4410RBE95RF4F455B8AB96",
-      },
-    });
-    return response.data;
-  } catch (error) {
-    console.error("Cep não encontrado:", error);
+    console.error("Erro na requisição:", error);
   }
 };

@@ -1,29 +1,28 @@
 <template>
   <div class="container-cotacao">
-    <div>
-      <table
-        class="shipping-table"
-        v-if="filteredShippingServices && filteredShippingServices.length"
+    <div
+      class="shipping-table"
+      v-if="filteredShippingServices && filteredShippingServices.length"
+    >
+      <div class="container-tab-header">
+        <h6>Transportadora</h6>
+        <h6>Serviço</h6>
+        <h6>Prazo</h6>
+        <h6>Preço</h6>
+        <h6></h6>
+      </div>
+
+      <div
+        v-for="(service, index) in filteredShippingServices"
+        :key="index"
+        class="tab-lines"
       >
-        <thead>
-          <tr>
-            <th>Transportadora</th>
-            <th>Serviço</th>
-            <th>Prazo</th>
-            <th>Preço</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(service, index) in filteredShippingServices" :key="index">
-            <td>{{ service.Carrier }}</td>
-            <td>{{ service.ServiceDescription }}</td>
-            <td>{{ service.DeliveryTime }} dias</td>
-            <td>R$ {{ service.ShippingPrice }}</td>
-            <td><BaseButton class="secondary-btn">Escolher</BaseButton></td>
-          </tr>
-        </tbody>
-      </table>
+        <p>{{ service.Carrier }}</p>
+        <p>{{ service.ServiceDescription }}</p>
+        <p>{{ service.DeliveryTime }} dias</p>
+        <p>R$ {{ service.ShippingPrice }}</p>
+        <BaseButton class="secondary-btn">Escolher</BaseButton>
+      </div>
     </div>
   </div>
 </template>
@@ -58,6 +57,18 @@ export default {
   align-items: center;
   justify-content: space-between;
   margin-top: 20px;
+}
+
+.container-tab-header,
+.tab-lines {
+  display: flex;
+  background-color: #f1f5f9;
+  justify-content: space-between;
+  padding: 0 16px;
+}
+
+h6 {
+  font-size: 12px;
 }
 
 .shipping-table {

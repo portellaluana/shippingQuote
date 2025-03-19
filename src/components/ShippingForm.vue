@@ -1,21 +1,29 @@
 <template>
   <div id="shippingForm">
     <form @submit.prevent="handleData">
-      <!-- Formulário de entrada de dados -->
       <div class="container-cep">
         <div class="container-input">
           <label for="SellerCEP">Origem*</label>
-          <input v-model="form.SellerCEP" class="normal" id="SellerCEP" />
+          <input
+            v-model="form.SellerCEP"
+            class="normal"
+            id="SellerCEP"
+            type="number"
+          />
+          <CepValidator :cep="form.SellerCEP" />
         </div>
+
         <div class="container-input">
           <label for="destino">Destino*</label>
           <input
             v-model="form.RecipientCEP"
-            label="Destino*"
             class="normal"
             id="destino"
+            type="number"
           />
+          <CepValidator :cep="form.RecipientCEP" />
         </div>
+
         <div class="container-input">
           <label for="Valor">Valor*</label>
           <input
@@ -23,6 +31,7 @@
             type="number"
             placeholder="R$"
             id="Valor"
+            class="valor"
           />
         </div>
       </div>
@@ -115,52 +124,71 @@
       </div>
 
       <div class="button-container">
-        <BaseButton type="submit" class="primary-btn">Fazer cotação</BaseButton>
+        <BaseButton type="submit" class="primary-btn" :disabled="isFormInvalid">
+          Fazer cotação
+        </BaseButton>
       </div>
-      <BaseButton class="secondary-btn" @click.prevent="adicionarProduto"
-        >Adicionar mais produtos</BaseButton
-      >
+      <BaseButton class="secondary-btn" @click.prevent="adicionarProduto">
+        Adicionar mais produtos
+      </BaseButton>
     </form>
     <ShippingQuoteList :shippingServices="shippingServices" />
   </div>
 </template>
 
 <script>
-import { getShippingQuote } from "../services/shippingService";
+import { postShippingQuote } from "../services/shippingService";
 import BaseButton from "./BaseButton.vue";
 import ShippingQuoteList from "./ShippingQuoteList.vue";
+import CepValidator from "./CepValidator.vue";
 
 export default {
   components: {
     BaseButton,
     ShippingQuoteList,
+    CepValidator,
   },
   data() {
     return {
       form: {
-        SellerCEP: "88303001",
-        RecipientCEP: "88032001",
-        declared_value: "400",
+        SellerCEP: "",
+        RecipientCEP: "",
+        declared_value: "",
       },
       shippingServices: [],
 
       produtos: [
         {
-          Weight: "1",
-          Width: "10",
-          Height: "20",
-          Length: "10",
-          declared_value: "400",
-          category: "aaa",
-          sku: "sss",
-          quantity: "1",
+          Weight: "",
+          Width: "",
+          Height: "",
+          Length: "",
+          declared_value: "",
+          category: "",
+          sku: "",
+          quantity: "",
         },
       ],
       isAddingProduct: false,
     };
   },
 
+  computed: {
+    isFormInvalid() {
+      const isSellerCepInvalid = this.isCepInvalid(this.form.SellerCEP);
+      const isRecipientCepInvalid = this.isCepInvalid(this.form.RecipientCEP);
+      const isDeclaredValueInvalid = !this.form.declared_value;
+      return (
+        isSellerCepInvalid || isRecipientCepInvalid || isDeclaredValueInvalid
+      );
+    },
+  },
+
   methods: {
+    isCepInvalid(cep) {
+      return cep.length === 8 && !/^[0-9]{8}$/.test(cep);
+    },
+
     adicionarProduto() {
       if (this.isAddingProduct) return;
       this.isAddingProduct = true;
@@ -171,7 +199,7 @@ export default {
         quantity: "",
         Weight: "",
         Width: "",
-        height: "10",
+        height: "",
         length: "",
         declared_value: "",
       });
@@ -186,6 +214,10 @@ export default {
     },
 
     async handleData() {
+      if (this.isFormInvalid) {
+        return;
+      }
+
       const requestData = {
         SellerCEP: this.form.SellerCEP,
         RecipientCEP: this.form.RecipientCEP,
@@ -203,15 +235,14 @@ export default {
         RecipientCountry: "BR",
       };
 
-      const response = await getShippingQuote(requestData);
-
+      const response = await postShippingQuote(requestData);
       this.shippingServices = response.ShippingSevicesArray || [];
-
-      console.log("response: ", response);
     },
   },
 };
 </script>
+
+
 
 
 <style scoped>
@@ -309,10 +340,22 @@ input:focus {
   outline: 1px solid #028ecc;
 }
 
-.normal {
-  margin-bottom: 8px;
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
+input[type="number"]::-ms-clear {
+  display: none;
+}
+
+input[type="number"]::placeholder {
+  text-align: right;
+}
+input[type="number"].valor::placeholder {
+  text-align: left;
+}
 @media (max-width: 768px) {
   .container-cep {
     flex-direction: column;

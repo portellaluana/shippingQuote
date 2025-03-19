@@ -14,7 +14,9 @@ module.exports = {
       "/CEP/Address/": {
         target: "https://api.frenet.com.br",
         changeOrigin: true,
-        pathRewrite: { "^/CEP/Address/": "/CEP/Address/" },
+        pathRewrite: {
+          "^/CEP/Address/": "/CEP/Address/",
+        },
       },
     },
   },
