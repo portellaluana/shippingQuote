@@ -5,23 +5,32 @@
         <div class="container-input">
           <label for="SellerCEP">Origem*</label>
           <input
-            v-model="form.SellerCEP"
+            v-model="formattedSellerCEP"
+            v-mask="'#####-###'"
             class="normal"
             id="SellerCEP"
-            type="number"
+            type="text"
+            maxlength="8"
+            @blur="validateOriginCep"
           />
-          <CepValidator :cep="form.SellerCEP" />
+          <CepValidator ref="originCepValidator" :cep="form.SellerCEP" />
         </div>
 
         <div class="container-input">
           <label for="destino">Destino*</label>
           <input
-            v-model="form.RecipientCEP"
+            v-model="formattedRecipientCEP"
+            v-mask="'#####-###'"
             class="normal"
             id="destino"
-            type="number"
+            type="text"
+            maxlength="8"
+            @blur="validateDestinationCep"
           />
-          <CepValidator :cep="form.RecipientCEP" />
+          <CepValidator
+            ref="destinationCepValidator"
+            :cep="form.RecipientCEP"
+          />
         </div>
 
         <div class="container-input">
@@ -48,24 +57,6 @@
           "
         >
           <div class="container-input-small">
-            <label for="categoria">Categoria</label>
-            <input
-              class="input-small"
-              v-model="produto.category"
-              type="string"
-              id="categoria"
-            />
-          </div>
-          <div class="container-input-small">
-            <label for="sku">SKU</label>
-            <input
-              class="input-small"
-              v-model="produto.sku"
-              type="string"
-              id="sku"
-            />
-          </div>
-          <div class="container-input-small">
             <label for="quantidade">Quantidade</label>
             <input
               class="input-small"
@@ -78,7 +69,7 @@
             <label for="peso">Peso</label>
             <input
               class="input-small"
-              v-model="produto.Weight"
+              v-model="produto.weight"
               type="number"
               placeholder="(kg)"
               label="Peso*"
@@ -89,7 +80,7 @@
             <label for="largura">Largura</label>
             <input
               class="input-small"
-              v-model="produto.Width"
+              v-model="produto.width"
               type="number"
               placeholder="(cm)"
               id="largura"
@@ -159,13 +150,10 @@ export default {
 
       produtos: [
         {
-          Weight: "",
-          Width: "",
-          Height: "",
-          Length: "",
-          declared_value: "",
-          category: "",
-          sku: "",
+          weight: "",
+          width: "",
+          height: "",
+          length: "",
           quantity: "",
         },
       ],
@@ -174,6 +162,27 @@ export default {
   },
 
   computed: {
+    formattedSellerCEP: {
+      get() {
+        return this.applyMask(this.form.SellerCEP);
+      },
+      set(newValue) {
+        if (this.form.SellerCEP !== this.removeMask(newValue)) {
+          this.form.SellerCEP = this.removeMask(newValue);
+        }
+      },
+    },
+    formattedRecipientCEP: {
+      get() {
+        return this.applyMask(this.form.RecipientCEP);
+      },
+      set(newValue) {
+        if (this.form.RecipientCEP !== this.removeMask(newValue)) {
+          this.form.RecipientCEP = this.removeMask(newValue);
+        }
+      },
+    },
+
     isFormInvalid() {
       const isSellerCepInvalid = this.isCepInvalid(this.form.SellerCEP);
       const isRecipientCepInvalid = this.isCepInvalid(this.form.RecipientCEP);
@@ -189,19 +198,24 @@ export default {
       return cep.length === 8 && !/^[0-9]{8}$/.test(cep);
     },
 
+    applyMask(cep) {
+      return cep.replace(/^(\d{5})(\d{3})$/, "$1-$2");
+    },
+
+    removeMask(cep) {
+      return cep.replace(/\D/g, "");
+    },
+
     adicionarProduto() {
       if (this.isAddingProduct) return;
       this.isAddingProduct = true;
 
       this.produtos.push({
-        category: "",
-        sku: "",
         quantity: "",
-        Weight: "",
-        Width: "",
+        weight: "",
+        width: "",
         height: "",
         length: "",
-        declared_value: "",
       });
 
       setTimeout(() => {
@@ -211,6 +225,14 @@ export default {
 
     removerProduto(index) {
       this.produtos.splice(index, 1);
+    },
+
+    validateOriginCep() {
+      this.$refs.originCepValidator.validateCep(this.form.SellerCEP);
+    },
+
+    validateDestinationCep() {
+      this.$refs.destinationCepValidator.validateCep(this.form.RecipientCEP);
     },
 
     async handleData() {
@@ -227,10 +249,8 @@ export default {
           Height: produto.height,
           Length: produto.length,
           Quantity: produto.quantity,
-          Weight: produto.Weight,
-          Width: produto.Width,
-          SKU: produto.sku,
-          Category: produto.category,
+          Weight: produto.weight,
+          Width: produto.width,
         })),
         RecipientCountry: "BR",
       };
@@ -241,9 +261,6 @@ export default {
   },
 };
 </script>
-
-
-
 
 <style scoped>
 #shippingForm {
