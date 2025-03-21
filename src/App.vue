@@ -1,15 +1,18 @@
 <template>
   <div id="app">
     <ShippingForm />
+    <ModalCEP />
   </div>
 </template>
 
 <script>
 import ShippingForm from "./components/ShippingForm.vue";
+import ModalCEP from "./components/ModalCEP.vue";
 
 export default {
   components: {
     ShippingForm,
+    ModalCEP,
   },
 };
 </script>

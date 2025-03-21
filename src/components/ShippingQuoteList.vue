@@ -4,35 +4,21 @@
       class="shipping-table"
       v-if="filteredShippingServices && filteredShippingServices.length"
     >
-      <div class="container-tab-header">
-        <h6>Transportadora</h6>
-        <h6>Serviço</h6>
-        <h6>Prazo</h6>
-        <h6>Preço</h6>
-        <h6></h6>
-      </div>
-
-      <div
+      <CardQuoteItem
         v-for="(service, index) in filteredShippingServices"
         :key="index"
-        class="tab-lines"
-      >
-        <p>{{ service.Carrier }}</p>
-        <p>{{ service.ServiceDescription }}</p>
-        <p>{{ service.DeliveryTime }} dias</p>
-        <p>R$ {{ service.ShippingPrice }}</p>
-        <BaseButton class="secondary-btn">Escolher</BaseButton>
-      </div>
+        :service="service"
+      />
     </div>
   </div>
 </template>
 
 <script>
-import BaseButton from "./BaseButton.vue";
+import CardQuoteItem from "./CardQuoteItem.vue";
 
 export default {
   components: {
-    BaseButton,
+    CardQuoteItem,
   },
   props: {
     shippingServices: {
@@ -59,8 +45,7 @@ export default {
   margin-top: 20px;
 }
 
-.container-tab-header,
-.tab-lines {
+.container-tab-header {
   display: flex;
   background-color: #f1f5f9;
   justify-content: space-between;
@@ -73,42 +58,9 @@ h6 {
 
 .shipping-table {
   width: 100%;
-  border-collapse: collapse;
-}
-
-.shipping-table th,
-.shipping-table td {
-  padding: 12px;
-  text-align: left;
-  border-bottom: 1px solid #c8c8c8;
-}
-
-.shipping-table th {
-  background-color: #f1f5f9;
-  color: #3c4151;
-}
-
-.shipping-table td {
-  font-weight: 600;
-}
-
-.shipping-table th {
-  border-bottom: none;
-}
-
-.shipping-table tr:last-child td {
-  border-bottom: none;
-}
-
-.shipping-table tr:nth-child(even) {
-  background-color: transparent;
-}
-
-.shipping-table tbody tr:hover {
-  background-color: transparent;
-}
-
-.secondary-btn {
-  cursor: pointer;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
 }
 </style>

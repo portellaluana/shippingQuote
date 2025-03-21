@@ -13,7 +13,12 @@
             maxlength="8"
             @blur="validateOriginCep"
           />
-          <CepValidator ref="originCepValidator" :cep="form.SellerCEP" />
+          <div class="container-cep-text">
+            <CepValidator ref="originCepValidator" :cep="form.SellerCEP" />
+            <BaseButton type="submit" class="link-btn">
+              Pesquisar CEP
+            </BaseButton>
+          </div>
         </div>
 
         <div class="container-input">
@@ -27,10 +32,15 @@
             maxlength="8"
             @blur="validateDestinationCep"
           />
-          <CepValidator
-            ref="destinationCepValidator"
-            :cep="form.RecipientCEP"
-          />
+          <div class="container-cep-text">
+            <CepValidator
+              ref="destinationCepValidator"
+              :cep="form.RecipientCEP"
+            />
+            <BaseButton type="submit" class="link-btn">
+              Pesquisar CEP
+            </BaseButton>
+          </div>
         </div>
 
         <div class="container-input">
@@ -74,7 +84,10 @@
               placeholder="(kg)"
               label="Peso*"
               id="peso"
+              @focus="onFocus"
+              @blur="onBlur"
             />
+            <p v-if="isFocused" class="hits">Máx: 9,999kg</p>
           </div>
           <div class="container-input-small">
             <label for="largura">Largura</label>
@@ -146,6 +159,7 @@ export default {
         RecipientCEP: "",
         declared_value: "",
       },
+      isFocused: false,
       shippingServices: [],
 
       produtos: [
@@ -258,6 +272,12 @@ export default {
       const response = await postShippingQuote(requestData);
       this.shippingServices = response.ShippingSevicesArray || [];
     },
+    onFocus() {
+      this.isFocused = true;
+    },
+    onBlur() {
+      this.isFocused = false;
+    },
   },
 };
 </script>
@@ -274,20 +294,21 @@ export default {
   align-items: baseline;
   justify-content: space-between;
   gap: 8px;
+  height: 80px;
 }
-.container-cliente {
+
+.container-cep-text {
   display: flex;
-  flex-direction: column;
-  text-align: left;
+  justify-content: space-between;
 }
 
 .container-details {
   display: flex;
   width: 100%;
+  height: 80px;
   gap: 6px;
   justify-content: space-between;
   position: relative;
-  margin-top: 16px;
   max-height: 500px;
   overflow-y: auto;
   padding: 1px;
@@ -295,11 +316,6 @@ export default {
 
 .button-container {
   text-align: center;
-}
-
-h6 {
-  font-size: 14px;
-  margin: 16px 0 4px 0;
 }
 
 .delete-button {
@@ -316,6 +332,7 @@ h6 {
   cursor: pointer;
   border-radius: 5px;
   background-color: transparent;
+  opacity: 0.5;
 }
 
 .container-input {
@@ -340,8 +357,9 @@ h6 {
 }
 
 label {
-  font-size: 12px;
-  margin: 8px 0 4px 0;
+  font-size: 11px;
+  margin: 0;
+  margin-bottom: 4px;
 }
 
 input {
@@ -373,6 +391,15 @@ input[type="number"]::placeholder {
 input[type="number"].valor::placeholder {
   text-align: left;
 }
+
+.hits {
+  color: #3c4151;
+  opacity: 0.5;
+  font-size: 12px;
+  margin-top: 4px;
+  height: 17px;
+}
+
 @media (max-width: 768px) {
   .container-cep {
     flex-direction: column;
@@ -384,10 +411,9 @@ input[type="number"].valor::placeholder {
   .container-input {
     width: 100%;
   }
-  label {
-    font-size: 10px;
-  }
+
   .container-details {
+    height: 300px;
     flex-wrap: wrap;
   }
 }

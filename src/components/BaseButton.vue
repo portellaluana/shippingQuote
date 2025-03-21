@@ -19,14 +19,11 @@ export default {
 <style scoped>
 .primary-btn {
   background-color: #02aeef;
-
   border: none;
-
   font-weight: 700;
-
   color: white;
   width: 100%;
-  margin: 16px 0 8px 0;
+  margin-bottom: 8px;
 }
 .primary-btn:hover {
   background-color: #028ecc;
@@ -51,6 +48,13 @@ export default {
   background-color: #028ecc;
   border: 1px solid #028ecc;
   color: white;
+}
+
+.link-btn {
+  color: #028ecc;
+  text-decoration: underline;
+  background-color: transparent;
+  border: none;
 }
 
 @media (max-width: 768px) {

@@ -63,11 +63,14 @@ export default {
   color: red;
   font-size: 12px;
   margin-top: 4px;
+  height: 17px;
 }
 .cep-message {
-  color: #02aeef;
+  color: #3c4151;
+  opacity: 0.5;
   font-size: 12px;
   margin-top: 4px;
+  height: 17px;
 }
 p {
   margin: 4px 0 0 0;
