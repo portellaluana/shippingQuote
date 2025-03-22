@@ -1,7 +1,7 @@
 <template>
   <div id="app">
-    <ShippingForm />
-    <ModalCEP />
+    <ShippingForm @show-modal="showModal" />
+    <ModalCEP v-if="isModalVisible" @close-modal="closeModal" />
   </div>
 </template>
 
@@ -14,8 +14,22 @@ export default {
     ShippingForm,
     ModalCEP,
   },
+  data() {
+    return {
+      isModalVisible: false,
+    };
+  },
+  methods: {
+    showModal() {
+      this.isModalVisible = true;
+    },
+    closeModal() {
+      this.isModalVisible = false;
+    },
+  },
 };
 </script>
+
 
 
 <style>

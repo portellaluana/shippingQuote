@@ -55,6 +55,7 @@ export default {
   text-decoration: underline;
   background-color: transparent;
   border: none;
+  cursor: pointer;
 }
 
 @media (max-width: 768px) {

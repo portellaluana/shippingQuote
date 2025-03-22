@@ -1,20 +1,30 @@
 <template>
   <div class="filter">
     <div class="cep-search">
+      <button class="close-button" />
       <div>
         <label for="estado">Estado (UF)</label>
-        <select v-model="estado" @change="fetchCidades" id="estado" required>
+        <select
+          v-model="estado"
+          @change="fetchCidades(estado)"
+          id="estado"
+          required
+        >
           <option value="">Selecione o Estado</option>
           <option v-for="uf in estados" :key="uf" :value="uf">{{ uf }}</option>
         </select>
       </div>
 
-      <div v-if="cidades.length > 0">
+      <div v-if="cidades && cidades.length > 0">
         <label for="cidade">Cidade</label>
         <select v-model="cidade" @change="fetchCepInfo" id="cidade" required>
           <option value="">Selecione a Cidade</option>
-          <option v-for="cidade in cidades" :key="cidade" :value="cidade">
-            {{ cidade }}
+          <option
+            v-for="cidade in cidades"
+            :key="cidade.id"
+            :value="cidade.nome"
+          >
+            {{ cidade.nome }}
           </option>
         </select>
       </div>
@@ -32,11 +42,11 @@
 
       <div v-if="cepInfo">
         <p><strong>CEP:</strong> {{ cepInfo.CEP }}</p>
-        <p><strong>Estado:</strong> {{ cepInfo.UF }}</p>
-        <p><strong>Cidade:</strong> {{ cepInfo.City }}</p>
-        <p><strong>Bairro:</strong> {{ cepInfo.District }}</p>
-        <p><strong>Rua:</strong> {{ cepInfo.Street }}</p>
       </div>
+
+      <BaseButton type="submit" class="primary-btn" @click.prevent="fetchCep">
+        Usar CEP
+      </BaseButton>
 
       <div v-if="errorMessage" class="error">
         <p>{{ errorMessage }}</p>
@@ -44,11 +54,16 @@
     </div>
   </div>
 </template>
-  
-  <script>
-import { fetchCidades, getCepInfo } from "@/services/shippingService";
+
+<script>
+import { getCidades, getCep } from "@/services/shippingService";
+import BaseButton from "./BaseButton.vue";
 
 export default {
+  components: {
+    BaseButton,
+  },
+
   data() {
     return {
       estado: "",
@@ -88,19 +103,24 @@ export default {
       ],
     };
   },
+
   methods: {
-    async fetchCidades() {
+    async fetchCidades(uf) {
       try {
-        this.cidades = await fetchCidades(); // Agora não precisa passar o estado
+        const cidadesResponse = await getCidades(uf);
+        this.cidades = Array.isArray(cidadesResponse) ? cidadesResponse : [];
       } catch (error) {
         this.errorMessage = "Erro ao buscar as cidades. Tente novamente.";
+        this.cidades = [];
       }
     },
-    async fetchCepInfo() {
-      if (this.cidade && this.rua) {
+
+    async fetchCep() {
+      if (this.estado && this.cidade && this.rua) {
         try {
-          const cepData = await getCepInfo(this.cidade); // Ajuste aqui para a lógica de buscar o CEP correto
+          const cepData = await getCep(this.estado, this.cidade, this.rua);
           this.cepInfo = cepData;
+          console.log(cepData);
         } catch (error) {
           this.errorMessage = "Erro ao buscar o CEP.";
         }
@@ -109,9 +129,7 @@ export default {
   },
 };
 </script>
-  
-  
-  
+
 
   <style scoped>
 .filter {
@@ -130,6 +148,8 @@ export default {
   border: none;
   border-radius: 5px;
   background-color: white;
+  width: 500px;
+  height: 500px;
 }
 
 label {
@@ -149,6 +169,23 @@ select {
 .error {
   color: red;
   font-weight: bold;
+}
+
+.close-button {
+  width: 12px;
+  height: 12px;
+  background-image: url("@/assets/delete-button.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+  position: relative;
+  bottom: 17px;
+  left: 254px;
+  border: none;
+  padding: 5px 0;
+  cursor: pointer;
+  border-radius: 5px;
+  background-color: transparent;
+  opacity: 0.5;
 }
 </style>
   

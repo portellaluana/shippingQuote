@@ -15,7 +15,7 @@
           />
           <div class="container-cep-text">
             <CepValidator ref="originCepValidator" :cep="form.SellerCEP" />
-            <BaseButton type="submit" class="link-btn">
+            <BaseButton type="submit" class="link-btn" @click="openModal">
               Pesquisar CEP
             </BaseButton>
           </div>
@@ -37,7 +37,7 @@
               ref="destinationCepValidator"
               :cep="form.RecipientCEP"
             />
-            <BaseButton type="submit" class="link-btn">
+            <BaseButton type="submit" class="link-btn" @click="openModal">
               Pesquisar CEP
             </BaseButton>
           </div>
@@ -208,6 +208,10 @@ export default {
   },
 
   methods: {
+    openModal() {
+      this.$emit("show-modal");
+    },
+
     isCepInvalid(cep) {
       return cep.length === 8 && !/^[0-9]{8}$/.test(cep);
     },

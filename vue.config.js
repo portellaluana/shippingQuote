@@ -1,4 +1,3 @@
-// vue.config.js
 module.exports = {
   devServer: {
     proxy: {
@@ -14,11 +13,12 @@ module.exports = {
         pathRewrite: { "^/CEP/Address/": "/CEP/Address/" },
         secure: true,
       },
-      "/api/municipios": {
-        target: "https://servicodados.ibge.gov.br", // Altere para o IBGE
+      "/ws": {
+        target: "https://viacep.com.br",
         changeOrigin: true,
-        pathRewrite: { "^/api/municipios": "/api/v1/localidades/municipios" }, // Ajuste o caminho para retornar todos os municípios
-        secure: true,
+        pathRewrite: {
+          "^/ws/(.*)": "/ws/$1",
+        },
       },
     },
   },
