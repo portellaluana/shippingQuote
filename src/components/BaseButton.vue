@@ -58,6 +58,20 @@ export default {
   cursor: pointer;
 }
 
+.primary-btn-text {
+  background-color: transparent;
+  border: none;
+  font-weight: 800;
+  color: #02aeef;
+  width: auto;
+  margin: 0;
+  padding: 0;
+}
+.primary-btn-text:hover {
+  background-color: transparent;
+  text-decoration: underline;
+}
+
 @media (max-width: 768px) {
   .secondary-btn {
     width: 100%;

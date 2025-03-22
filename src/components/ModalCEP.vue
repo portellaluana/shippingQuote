@@ -2,7 +2,7 @@
   <div class="filter">
     <div class="cep-search">
       <button class="close-button" />
-      <div>
+      <div class="container">
         <label for="estado">Estado (UF)</label>
         <select
           v-model="estado"
@@ -29,7 +29,7 @@
         </select>
       </div>
 
-      <div>
+      <div class="container">
         <label for="rua">Rua</label>
         <input
           type="text"
@@ -40,12 +40,10 @@
         />
       </div>
 
-      <div v-if="cepInfo">
-        <p><strong>CEP:</strong> {{ cepInfo.CEP }}</p>
-      </div>
+      <CEPList v-if="cepInfo.length > 0" :cepInfo="cepInfo" />
 
       <BaseButton type="submit" class="primary-btn" @click.prevent="fetchCep">
-        Usar CEP
+        Buscar CEP
       </BaseButton>
 
       <div v-if="errorMessage" class="error">
@@ -58,10 +56,12 @@
 <script>
 import { getCidades, getCep } from "@/services/shippingService";
 import BaseButton from "./BaseButton.vue";
+import CEPList from "./CEPList.vue";
 
 export default {
   components: {
     BaseButton,
+    CEPList,
   },
 
   data() {
@@ -70,7 +70,7 @@ export default {
       cidade: "",
       rua: "",
       cidades: [],
-      cepInfo: null,
+      cepInfo: [],
       errorMessage: "",
       estados: [
         "AC",
@@ -119,10 +119,20 @@ export default {
       if (this.estado && this.cidade && this.rua) {
         try {
           const cepData = await getCep(this.estado, this.cidade, this.rua);
-          this.cepInfo = cepData;
-          console.log(cepData);
+          if (Array.isArray(cepData) && cepData.length > 0) {
+            this.cepInfo = cepData.map((item) => ({
+              cep: item.cep,
+              logradouro: item.logradouro,
+              bairro: item.bairro,
+              localidade: item.localidade,
+              uf: item.uf,
+            }));
+          } else {
+            this.errorMessage = "Nenhum CEP encontrado para essa busca.";
+            this.cepInfo = [];
+          }
         } catch (error) {
-          this.errorMessage = "Erro ao buscar o CEP.";
+          this.errorMessage = "CEP não encontrado.";
         }
       }
     },
@@ -130,8 +140,17 @@ export default {
 };
 </script>
 
+<style scoped>
+.container {
+  width: 100%;
+}
 
-  <style scoped>
+label {
+  font-size: 11px;
+  margin: 0;
+  margin-bottom: 4px;
+  text-align: left;
+}
 .filter {
   width: 100vw;
   position: absolute;
@@ -159,16 +178,28 @@ label {
 
 input,
 select {
-  width: 100%;
+  background: #f1f5f9;
+  border-radius: 4px;
+  border: none;
   padding: 8px;
-  margin-bottom: 20px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+  font-size: 14px;
+  outline: none;
+  color: #3c4151;
+  width: 100%;
+  margin-bottom: 16px;
+}
+input {
+  box-sizing: border-box;
+}
+input:focus,
+select:focus {
+  outline: 1px solid #028ecc;
 }
 
 .error {
-  color: red;
-  font-weight: bold;
+  color: #3c4151;
+  font-weight: 400;
+  font-size: 14px;
 }
 
 .close-button {
@@ -188,4 +219,3 @@ select {
   opacity: 0.5;
 }
 </style>
-  

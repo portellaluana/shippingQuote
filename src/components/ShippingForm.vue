@@ -1,5 +1,6 @@
 <template>
   <div id="shippingForm">
+    <CEPList :cepData="cepData" @use-cep="handleCepUse" />
     <form @submit.prevent="handleData">
       <div class="container-cep">
         <div class="container-input">
@@ -145,12 +146,14 @@ import { postShippingQuote } from "../services/shippingService";
 import BaseButton from "./BaseButton.vue";
 import ShippingQuoteList from "./ShippingQuoteList.vue";
 import CepValidator from "./CepValidator.vue";
+import CEPList from "./CEPList.vue";
 
 export default {
   components: {
     BaseButton,
     ShippingQuoteList,
     CepValidator,
+    CEPList,
   },
   data() {
     return {
@@ -208,6 +211,11 @@ export default {
   },
 
   methods: {
+    handleCepUse(info) {
+      console.log("CEP recebido no ShippingForm: ", info);
+      this.form.SellerCEP = info.cep;
+    },
+
     openModal() {
       this.$emit("show-modal");
     },
