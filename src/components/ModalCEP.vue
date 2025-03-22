@@ -1,60 +1,55 @@
 <template>
-  <div class="filter">
-    <div class="cep-search">
-      <button class="close-button" />
-      <div class="container">
-        <label for="estado">Estado (UF)</label>
-        <select
-          v-model="estado"
-          @change="fetchCidades(estado)"
-          id="estado"
-          required
-        >
-          <option value="">Selecione o Estado</option>
-          <option v-for="uf in estados" :key="uf" :value="uf">{{ uf }}</option>
-        </select>
-      </div>
+  <div class="cep-search">
+    <button class="close-button" @click="closeModal" />
+    <div class="container">
+      <label for="estado">Estado (UF)</label>
+      <select
+        v-model="estado"
+        @change="fetchCidades(estado)"
+        id="estado"
+        required
+      >
+        <option value="">Selecione o Estado</option>
+        <option v-for="uf in estados" :key="uf" :value="uf">{{ uf }}</option>
+      </select>
+    </div>
 
-      <div v-if="cidades && cidades.length > 0">
-        <label for="cidade">Cidade</label>
-        <select v-model="cidade" @change="fetchCepInfo" id="cidade" required>
-          <option value="">Selecione a Cidade</option>
-          <option
-            v-for="cidade in cidades"
-            :key="cidade.id"
-            :value="cidade.nome"
-          >
-            {{ cidade.nome }}
-          </option>
-        </select>
-      </div>
+    <div v-if="cidades && cidades.length > 0">
+      <label for="cidade">Cidade</label>
+      <select v-model="cidade" @change="fetchCepInfo" id="cidade" required>
+        <option value="">Selecione a Cidade</option>
+        <option v-for="cidade in cidades" :key="cidade.id" :value="cidade.nome">
+          {{ cidade.nome }}
+        </option>
+      </select>
+    </div>
 
-      <div class="container">
-        <label for="rua">Rua</label>
-        <input
-          type="text"
-          id="rua"
-          v-model="rua"
-          @input="fetchCepInfo"
-          placeholder="Digite o nome da rua"
-        />
-      </div>
+    <div class="container">
+      <label for="rua">Rua</label>
+      <input
+        type="text"
+        id="rua"
+        v-model="rua"
+        @input="fetchCepInfo"
+        placeholder="Digite o nome da rua"
+      />
+    </div>
 
-      <CEPList v-if="cepInfo.length > 0" :cepInfo="cepInfo" />
+    <CEPList v-if="cepInfo.length > 0" :cepInfo="cepInfo" />
 
-      <BaseButton type="submit" class="primary-btn" @click.prevent="fetchCep">
-        Buscar CEP
-      </BaseButton>
+    <BaseButton type="submit" class="primary-btn" @click.prevent="fetchCep">
+      Buscar CEP
+    </BaseButton>
 
-      <div v-if="errorMessage" class="error">
-        <p>{{ errorMessage }}</p>
-      </div>
+    <div v-if="errorMessage" class="error">
+      <p>{{ errorMessage }}</p>
     </div>
   </div>
+  <div class="filter" @click="closeModal"></div>
 </template>
 
 <script>
-import { getCidades, getCep } from "@/services/shippingService";
+import { getCidades, getCep } from "@/services/shipping";
 import BaseButton from "./BaseButton.vue";
 import CEPList from "./CEPList.vue";
 
@@ -105,6 +100,10 @@ export default {
   },
 
   methods: {
+    closeModal() {
+      this.$emit("close-modal");
+    },
+
     async fetchCidades(uf) {
       try {
         const cidadesResponse = await getCidades(uf);
@@ -132,10 +131,29 @@ export default {
             this.cepInfo = [];
           }
         } catch (error) {
-          this.errorMessage = "CEP não encontrado.";
+          if (error.response && error.response.status === 500) {
+            this.errorMessage = "Erro 500: Tente novamente mais tarde.";
+          } else {
+            this.errorMessage =
+              "Erro na requisição de CEP. Tente novamente mais tarde.";
+          }
         }
       }
     },
+
+    handleEscKey(event) {
+      if (event.key === "Escape") {
+        this.closeModal();
+      }
+    },
+  },
+
+  mounted() {
+    document.addEventListener("keydown", this.handleEscKey);
+  },
+
+  beforeUnmount() {
+    document.removeEventListener("keydown", this.handleEscKey);
   },
 };
 </script>
@@ -159,6 +177,8 @@ label {
   justify-content: center;
   align-items: center;
   background-color: rgba(0, 0, 0, 0.323);
+  z-index: 1;
+  top: 0;
 }
 .cep-search {
   max-width: 600px;
@@ -169,6 +189,8 @@ label {
   background-color: white;
   width: 500px;
   height: 500px;
+  z-index: 2;
+  position: absolute;
 }
 
 label {

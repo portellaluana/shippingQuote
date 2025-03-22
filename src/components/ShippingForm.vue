@@ -142,7 +142,7 @@
 </template>
 
 <script>
-import { postShippingQuote } from "../services/shippingService";
+import { postShippingQuote } from "../services/shipping";
 import BaseButton from "./BaseButton.vue";
 import ShippingQuoteList from "./ShippingQuoteList.vue";
 import CepValidator from "./CepValidator.vue";
@@ -415,6 +415,7 @@ input[type="number"].valor::placeholder {
 @media (max-width: 768px) {
   .container-cep {
     flex-direction: column;
+    height: 190px;
   }
   input {
     font-size: 12px;
@@ -427,6 +428,7 @@ input[type="number"].valor::placeholder {
   .container-details {
     height: 300px;
     flex-wrap: wrap;
+    padding-top: 16px;
   }
 }
 @media (min-width: 768px) {

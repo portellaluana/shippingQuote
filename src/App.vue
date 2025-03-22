@@ -31,13 +31,14 @@ export default {
 </script>
 
 
-
 <style>
 body {
+  box-sizing: border-box;
   background-image: url("/public/background.svg");
   background-size: cover;
   background-position: top center;
   background-repeat: no-repeat;
+  overflow: hidden;
 }
 #app {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
@@ -66,5 +67,10 @@ body {
   padding: 20px;
   width: 60%;
   max-width: 1080px;
+}
+@media (max-width: 768px) {
+  body {
+    overflow: scroll;
+  }
 }
 </style>

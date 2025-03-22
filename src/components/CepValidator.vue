@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import { getCepInfo } from "../services/shippingService";
+import { getCepInfo } from "../services/shipping";
 
 export default {
   props: {
