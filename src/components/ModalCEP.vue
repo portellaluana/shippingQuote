@@ -52,6 +52,7 @@
 import { getCidades, getCep } from "@/services/shipping";
 import BaseButton from "./BaseButton.vue";
 import CEPList from "./CEPList.vue";
+import { estados } from "@/assets/estados";
 
 export default {
   components: {
@@ -67,35 +68,7 @@ export default {
       cidades: [],
       cepInfo: [],
       errorMessage: "",
-      estados: [
-        "AC",
-        "AL",
-        "AP",
-        "AM",
-        "BA",
-        "CE",
-        "DF",
-        "ES",
-        "GO",
-        "MA",
-        "MT",
-        "MS",
-        "MG",
-        "PA",
-        "PB",
-        "PR",
-        "PE",
-        "PI",
-        "RJ",
-        "RN",
-        "RS",
-        "RO",
-        "RR",
-        "SC",
-        "SP",
-        "SE",
-        "TO",
-      ],
+      estados,
     };
   },
 

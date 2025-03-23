@@ -20,11 +20,9 @@
       </div>
       <BaseButton
         type="submit"
-        class="primary-btn primary-btn-text"
-        @click.prevent="onUseCep(info.cep)"
-      >
-        Usar CEP
-      </BaseButton>
+        class="copy-button"
+        @click.prevent="copyCep(info.cep)"
+      />
     </li>
   </ul>
 </template>
@@ -48,10 +46,9 @@ export default {
     },
   },
   methods: {
-    onUseCep(info) {
-      const cep = String(info);
-      this.$emit("use-cep", cep);
-      console.log(cep);
+    copyCep(info) {
+      const cep = String(info).replace("-", "");
+      navigator.clipboard.writeText(cep);
     },
   },
 };
@@ -88,6 +85,7 @@ li {
   text-align: left;
   border-bottom: 1px solid #02aeef;
   padding: 16px 8px 16px 0;
+  align-items: center;
 }
 
 li:last-child {
@@ -105,5 +103,17 @@ p {
 
 p span {
   color: grey;
+}
+
+.copy-button {
+  width: 16px;
+  height: 16px;
+  background-image: url("@/assets/copy.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+  border: none;
+  padding: 5px 0;
+  cursor: pointer;
+  background-color: transparent;
 }
 </style>
