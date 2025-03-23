@@ -15,8 +15,8 @@
       @keydown="handleKeydown"
     />
 
-    <div v-if="isRequiredError" class="error-message">
-      <p>Campo obrigatório</p>
+    <div class="error-message">
+      <p v-if="isRequiredError">Campo obrigatório</p>
     </div>
   </div>
 </template>
@@ -118,8 +118,10 @@ export default {
 .container-input {
   width: 100%;
 }
+
 p {
   margin: 4px 0 0 0;
+  text-align: left;
 }
 input {
   background: #f1f5f9;
@@ -142,10 +144,6 @@ input:focus {
   font-size: 11px;
   opacity: 0.5;
   margin: 0 !important;
-}
-
-#rua {
-  margin-bottom: 8px;
 }
 </style>
   

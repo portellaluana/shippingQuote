@@ -447,7 +447,7 @@ input[type="number"].valor::placeholder {
   }
 
   .container-details {
-    height: 300px;
+    height: 363px;
     flex-wrap: wrap;
     padding-top: 16px;
   }

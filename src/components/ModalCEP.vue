@@ -1,27 +1,39 @@
 <template>
   <div class="cep-search">
     <button class="close-button" @click="closeModal" />
-    <div class="container">
-      <label for="estado">Estado (UF)</label>
-      <select
-        v-model="estado"
-        @change="fetchCidades(estado)"
-        id="estado"
-        required
-      >
-        <option value="">Selecione o Estado</option>
-        <option v-for="uf in estados" :key="uf" :value="uf">{{ uf }}</option>
-      </select>
-    </div>
+    <div class="container-uf-cidade">
+      <div class="container-estado">
+        <label for="estado">Estado (UF)*</label>
+        <select
+          v-model="estado"
+          @change="fetchCidades(estado)"
+          id="estado"
+          required
+        >
+          <option value="">Selecione o Estado</option>
+          <option v-for="uf in estados" :key="uf" :value="uf">{{ uf }}</option>
+        </select>
+      </div>
 
-    <div v-if="cidades && cidades.length > 0">
-      <label for="cidade">Cidade</label>
-      <select v-model="cidade" @change="fetchCepInfo" id="cidade" required>
-        <option value="">Selecione a Cidade</option>
-        <option v-for="cidade in cidades" :key="cidade.id" :value="cidade.nome">
-          {{ cidade.nome }}
-        </option>
-      </select>
+      <div class="container-cidade">
+        <label for="cidade">Cidade*</label>
+        <select
+          v-model="cidade"
+          :disabled="!estado"
+          @change="fetchCepInfo"
+          id="cidade"
+          required
+        >
+          <option value="">Selecione a Cidade</option>
+          <option
+            v-for="cidade in cidades"
+            :key="cidade.id"
+            :value="cidade.nome"
+          >
+            {{ cidade.nome }}
+          </option>
+        </select>
+      </div>
     </div>
 
     <div class="container">
@@ -51,6 +63,7 @@
   </div>
   <div class="filter" @click="closeModal"></div>
 </template>
+
 
 <script>
 import { getCidades, getCep } from "@/services/shipping";
@@ -168,7 +181,11 @@ label {
   height: auto;
   z-index: 2;
   position: absolute;
-  min-width: 340px;
+  min-width: 430px;
+}
+
+.primary-btn {
+  margin-top: 8px;
 }
 
 label {
@@ -188,9 +205,11 @@ select {
   width: 100%;
   margin-bottom: 16px;
 }
+
 input {
   box-sizing: border-box;
 }
+
 input:focus,
 select:focus {
   outline: 1px solid #028ecc;
@@ -217,5 +236,28 @@ select:focus {
   display: flex;
   justify-self: end;
   margin-bottom: 8px;
+}
+.container-estado,
+.container-cidade {
+  width: 50%;
+}
+.container-uf-cidade {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+@media (max-width: 940px) {
+  .cep-search {
+    min-width: 230px;
+  }
+  .container-uf-cidade {
+    display: inline-flex;
+    flex-direction: column;
+    width: 100%;
+  }
+  .container-estado,
+  .container-cidade {
+    width: 100%;
+  }
 }
 </style>
