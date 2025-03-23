@@ -1,6 +1,5 @@
 <template>
   <div id="shippingForm">
-    <CEPList :cepData="cepData" @use-cep="handleCepUse" />
     <form @submit.prevent="handleData">
       <div class="container-cep">
         <div class="container-input">
@@ -63,17 +62,16 @@
         </div>
       </div>
 
-      <div>
-        <div
+      <ul id="quote-list" :style="quoteListStyle">
+        <li
           v-for="(produto, index) in produtos"
           :key="index"
           class="container-details"
-          :style="
-            index !== 0
-              ? { borderTop: '1px solid #028ecc', paddingTop: '16px' }
-              : {}
-          "
         >
+          <div class="list-number">
+            <p>#{{ index + 1 }}</p>
+          </div>
+
           <div class="container-input-small">
             <label for="quantidade">Quantidade*</label>
             <BaseInput
@@ -97,7 +95,6 @@
               @focus="onFocus"
               @blur="onBlur"
             />
-            <p v-if="isFocused" class="hits">Máx: 9,999kg</p>
           </div>
           <div class="container-input-small">
             <label for="largura">Largura*</label>
@@ -137,8 +134,8 @@
             @click="removerProduto(index)"
             class="delete-button"
           />
-        </div>
-      </div>
+        </li>
+      </ul>
 
       <div class="button-container">
         <BaseButton type="submit" class="primary-btn" :disabled="isFormInvalid">
@@ -158,7 +155,6 @@ import { postShippingQuote } from "../services/shipping";
 import BaseButton from "./BaseButton.vue";
 import ShippingQuoteList from "./ShippingQuoteList.vue";
 import CepValidator from "./CepValidator.vue";
-import CEPList from "./CEPList.vue";
 import BaseInput from "./BaseInput.vue";
 
 export default {
@@ -166,7 +162,6 @@ export default {
     BaseButton,
     ShippingQuoteList,
     CepValidator,
-    CEPList,
     BaseInput,
   },
   data() {
@@ -176,9 +171,7 @@ export default {
         RecipientCEP: "",
         declared_value: "",
       },
-      isFocused: false,
       shippingServices: [],
-
       produtos: [
         {
           weight: "",
@@ -193,6 +186,17 @@ export default {
   },
 
   computed: {
+    quoteListStyle() {
+      if (this.produtos.length > 3) {
+        return {
+          maxHeight: "200px",
+          overflowY: "auto",
+          paddingRight: "16px",
+          overflowX: "hidden",
+        };
+      }
+      return {};
+    },
     formattedSellerCEP: {
       get() {
         return this.applyMask(this.form.SellerCEP);
@@ -225,11 +229,6 @@ export default {
   },
 
   methods: {
-    handleCepUse(info) {
-      console.log("CEP recebido no ShippingForm: ", info);
-      this.form.SellerCEP = info.cep;
-    },
-
     openModal() {
       this.$emit("show-modal");
     },
@@ -298,9 +297,6 @@ export default {
       const response = await postShippingQuote(requestData);
       this.shippingServices = response.ShippingSevicesArray || [];
     },
-    onFocus() {
-      this.isFocused = true;
-    },
     onBlur() {
       this.isFocused = false;
     },
@@ -325,8 +321,8 @@ export default {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: 8px;
   height: 70px;
+  gap: 8px;
 }
 
 .container-cep-text {
@@ -339,13 +335,14 @@ export default {
 .container-details {
   display: flex;
   width: 100%;
-  height: 70px;
+  height: 82px;
   gap: 6px;
   justify-content: space-between;
   position: relative;
   max-height: 500px;
   overflow-y: auto;
   padding: 1px;
+  align-items: center;
 }
 
 .button-container {
@@ -380,6 +377,7 @@ export default {
   display: inline-flex;
   flex-direction: column;
   text-align: left;
+  height: 62px;
 }
 
 .input-wrapper {
@@ -395,36 +393,6 @@ label {
   margin: 0 0 4px 0;
 }
 
-input {
-  background: #f1f5f9;
-  border-radius: 4px;
-  border: none;
-  padding: 8px;
-  font-size: 14px;
-  outline: none;
-}
-
-input:focus {
-  outline: 1px solid #028ecc;
-}
-
-input[type="number"]::-webkit-outer-spin-button,
-input[type="number"]::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-input[type="number"]::-ms-clear {
-  display: none;
-}
-
-input[type="number"]::placeholder {
-  text-align: right;
-}
-input[type="number"].valor::placeholder {
-  text-align: left;
-}
-
 .hits {
   color: #3c4151;
   opacity: 0.5;
@@ -433,10 +401,70 @@ input[type="number"].valor::placeholder {
   height: 17px;
 }
 
+ul {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+ul::-webkit-scrollbar {
+  width: 8px;
+}
+
+ul::-webkit-scrollbar-thumb {
+  background-color: #028ecc;
+  border-radius: 10px;
+}
+
+ul::-webkit-scrollbar-thumb:hover {
+  background-color: #028ecc;
+}
+
+ul::-webkit-scrollbar-track {
+  background-color: #f1f1f1;
+  border-radius: 10px;
+}
+
+li {
+  display: flex;
+  justify-content: space-between;
+  text-align: left;
+  border-bottom: 1px solid #02aeef;
+  padding: 8px 0 16px 0;
+  align-items: baseline;
+}
+
+li:last-child {
+  border-bottom: none;
+}
+.list-number p {
+  font-size: 14px;
+  font-weight: 800;
+  color: #3c41512e;
+  margin: 0;
+}
+
 @media (max-width: 940px) {
+  .delete-button {
+    top: 20px;
+    right: 10px;
+  }
+
+  ul {
+    max-height: 400px !important;
+    overflow: hidden auto !important;
+    margin-bottom: 16px;
+    padding: 0 !important;
+  }
+
+  li {
+    padding: 0 !important;
+  }
+
   .container-cep {
     flex-direction: column;
-    height: 190px;
+    height: 172px;
+    gap: 0;
   }
   input {
     font-size: 12px;
@@ -445,11 +473,25 @@ input[type="number"].valor::placeholder {
   .container-input {
     width: 100%;
   }
-
+  .list-number p {
+    position: inherit;
+    padding-top: 0;
+  }
   .container-details {
-    height: 363px;
+    height: 356px;
     flex-wrap: wrap;
-    padding-top: 16px;
+    padding-top: 14px !important;
+  }
+  #shippingForm {
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: center;
+    height: auto;
+  }
+  .quote-list {
+    max-height: 500px;
+    overflow: hidden auto;
+    padding-right: 16px;
   }
 }
 </style>
