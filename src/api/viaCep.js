@@ -1,7 +1,7 @@
 import axiosCep from "axios";
 
 const apiViaCep = axiosCep.create({
-  baseURL: "", 
+  baseURL: "https://viacep.com.br/ws",
   headers: {
     "Content-Type": "application/json",
   },

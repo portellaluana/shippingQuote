@@ -13,13 +13,6 @@ module.exports = {
         pathRewrite: { "^/CEP/Address/": "/CEP/Address/" },
         secure: true,
       },
-      "/ws": {
-        target: "https://viacep.com.br",
-        changeOrigin: true,
-        pathRewrite: {
-          "^/ws/(.*)": "/ws/$1",
-        },
-      },
     },
   },
 };
