@@ -29,7 +29,6 @@
 
 <script>
 import BaseButton from "./BaseButton.vue";
-
 export default {
   components: {
     BaseButton,
@@ -49,6 +48,8 @@ export default {
     copyCep(info) {
       const cep = String(info).replace("-", "");
       navigator.clipboard.writeText(cep);
+
+      this.$emit("close-modal");
     },
   },
 };

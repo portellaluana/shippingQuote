@@ -35,7 +35,11 @@
       />
     </div>
 
-    <CEPList v-if="cepInfo.length > 0" :cepInfo="cepInfo" />
+    <CEPList
+      v-if="cepInfo.length > 0"
+      :cepInfo="cepInfo"
+      @close-modal="closeModal"
+    />
 
     <BaseButton type="submit" class="primary-btn" @click.prevent="fetchCep">
       Buscar CEP
@@ -52,7 +56,7 @@
 import { getCidades, getCep } from "@/services/shipping";
 import BaseButton from "./BaseButton.vue";
 import CEPList from "./CEPList.vue";
-import { estados } from "@/assets/estados";
+import { estados } from "@/utils/estados";
 
 export default {
   components: {
