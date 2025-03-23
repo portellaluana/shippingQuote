@@ -82,5 +82,6 @@ export default {
 
 p {
   margin: 4px 0 0 0;
+  font-size: 11px;
 }
 </style>

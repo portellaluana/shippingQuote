@@ -134,12 +134,12 @@ input {
 }
 
 input:focus {
-  outline: 2px solid #028ecc;
+  outline: 1px solid #028ecc;
 }
 
 .error-message {
   color: red;
-  font-size: 12px;
+  font-size: 11px;
   opacity: 0.5;
   margin: 0 !important;
 }

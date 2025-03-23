@@ -4,7 +4,12 @@
     <form @submit.prevent="handleData">
       <div class="container-cep">
         <div class="container-input">
-          <label for="SellerCEP">Origem*</label>
+          <div class="container-header-input">
+            <label for="SellerCEP">Origem*</label>
+            <BaseButton type="submit" class="link-btn" @click="openModal">
+              Pesquisar CEP
+            </BaseButton>
+          </div>
           <BaseInput
             required
             v-model="formattedSellerCEP"
@@ -17,14 +22,16 @@
           />
           <div class="container-cep-text">
             <CepValidator ref="originCepValidator" :cep="form.SellerCEP" />
-            <BaseButton type="submit" class="link-btn" @click="openModal">
-              Pesquisar CEP
-            </BaseButton>
           </div>
         </div>
 
         <div class="container-input">
-          <label for="destino">Destino*</label>
+          <div class="container-header-input">
+            <label for="destino">Destino*</label>
+            <BaseButton type="submit" class="link-btn" @click="openModal">
+              Pesquisar CEP
+            </BaseButton>
+          </div>
           <BaseInput
             required
             v-model="formattedRecipientCEP"
@@ -40,9 +47,6 @@
               ref="destinationCepValidator"
               :cep="form.RecipientCEP"
             />
-            <BaseButton type="submit" class="link-btn" @click="openModal">
-              Pesquisar CEP
-            </BaseButton>
           </div>
         </div>
 
@@ -305,6 +309,12 @@ export default {
 </script>
 
 <style scoped>
+.container-header-input {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 #shippingForm {
   padding: 20px;
   border-radius: 8px;
@@ -316,7 +326,7 @@ export default {
   align-items: baseline;
   justify-content: space-between;
   gap: 8px;
-  height: 80px;
+  height: 70px;
 }
 
 .container-cep-text {
@@ -329,7 +339,7 @@ export default {
 .container-details {
   display: flex;
   width: 100%;
-  height: 80px;
+  height: 70px;
   gap: 6px;
   justify-content: space-between;
   position: relative;
@@ -382,8 +392,7 @@ export default {
 
 label {
   font-size: 11px;
-  margin: 0;
-  margin-bottom: 4px;
+  margin: 0 0 4px 0;
 }
 
 input {
