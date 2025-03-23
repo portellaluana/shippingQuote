@@ -6,6 +6,7 @@
         <div class="container-input">
           <label for="SellerCEP">Origem*</label>
           <BaseInput
+            required
             v-model="formattedSellerCEP"
             v-mask="'#####-###'"
             class="normal"
@@ -25,6 +26,7 @@
         <div class="container-input">
           <label for="destino">Destino*</label>
           <BaseInput
+            required
             v-model="formattedRecipientCEP"
             v-mask="'#####-###'"
             class="normal"
@@ -47,6 +49,7 @@
         <div class="container-input">
           <label for="Valor">Valor*</label>
           <BaseInput
+            required
             v-model="form.declared_value"
             type="number"
             placeholder="R$"
@@ -68,8 +71,9 @@
           "
         >
           <div class="container-input-small">
-            <label for="quantidade">Quantidade</label>
+            <label for="quantidade">Quantidade*</label>
             <BaseInput
+              required
               v-model="produto.quantity"
               class="input-small"
               type="number"
@@ -77,8 +81,9 @@
             />
           </div>
           <div class="container-input-small">
-            <label for="peso">Peso</label>
+            <label for="peso">Peso*</label>
             <BaseInput
+              required
               v-model="produto.weight"
               class="input-small"
               type="number"
@@ -91,8 +96,9 @@
             <p v-if="isFocused" class="hits">Máx: 9,999kg</p>
           </div>
           <div class="container-input-small">
-            <label for="largura">Largura</label>
+            <label for="largura">Largura*</label>
             <BaseInput
+              required
               v-model="produto.width"
               class="input-small"
               type="number"
@@ -101,8 +107,9 @@
             />
           </div>
           <div class="container-input-small">
-            <label for="altura">Altura</label>
+            <label for="altura">Altura*</label>
             <BaseInput
+              required
               v-model="produto.height"
               class="input-small"
               type="number"
@@ -113,6 +120,7 @@
           <div class="container-input-small">
             <label for="comprimento">Comprimento*</label>
             <BaseInput
+              required
               v-model="produto.length"
               class="input-small"
               type="number"
@@ -314,6 +322,8 @@ export default {
 .container-cep-text {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  width: 100%;
 }
 
 .container-details {
@@ -353,7 +363,7 @@ export default {
   display: inline-flex;
   flex-direction: column;
   text-align: left;
-  width: 47%;
+  width: 100%;
 }
 
 .container-input-small {
@@ -414,7 +424,7 @@ input[type="number"].valor::placeholder {
   height: 17px;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 940px) {
   .container-cep {
     flex-direction: column;
     height: 190px;
@@ -431,11 +441,6 @@ input[type="number"].valor::placeholder {
     height: 300px;
     flex-wrap: wrap;
     padding-top: 16px;
-  }
-}
-@media (min-width: 768px) {
-  .input-small {
-    width: 82%;
   }
 }
 </style>

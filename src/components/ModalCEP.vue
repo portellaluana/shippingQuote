@@ -25,10 +25,10 @@
     </div>
 
     <div class="container">
-      <label for="rua">Rua</label>
+      <label for="rua">Rua*</label>
       <BaseInput
+        required
         v-model="rua"
-        class="normal"
         id="rua"
         @input="fetchCepInfo"
         placeholder="Digite o nome da rua"
@@ -165,7 +165,7 @@ label {
   border: none;
   border-radius: 5px;
   background-color: white;
-  height: 500px;
+  height: auto;
   z-index: 2;
   position: absolute;
   min-width: 340px;
@@ -217,11 +217,5 @@ select:focus {
   display: flex;
   justify-self: end;
   margin-bottom: 8px;
-}
-
-@media (max-width: 768px) {
-  .cep-search {
-    min-width: 215px;
-  }
 }
 </style>

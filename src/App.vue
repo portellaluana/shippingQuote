@@ -68,7 +68,7 @@ body {
   width: 60%;
   max-width: 1080px;
 }
-@media (max-width: 768px) {
+@media (max-width: 940px) {
   body {
     overflow: scroll;
   }

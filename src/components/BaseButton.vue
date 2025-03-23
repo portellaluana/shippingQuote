@@ -73,7 +73,7 @@ export default {
   background-color: transparent;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 940px) {
   .secondary-btn {
     width: 100%;
     justify-content: center;

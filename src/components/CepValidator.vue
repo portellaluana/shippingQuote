@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-if="showError" class="error-message">
-      <p>CEP inválido.</p>
+      <p>CEP inválido ou não encontrado.</p>
     </div>
     <div v-if="cepValid" class="cep-message">
       <p>{{ infoCep }}</p>
@@ -30,13 +30,19 @@ export default {
     cep(newCep) {
       if (newCep.length === 8) {
         this.validateCep(newCep);
-      } else {
+      } else if (newCep.length === 0) {
         this.showError = false;
+        this.cepValid = false;
+        this.infoCep = "";
       }
     },
   },
   methods: {
     async validateCep(cep) {
+      if (!cep) {
+        return;
+      }
+
       try {
         const response = await getCepInfo(cep);
 
@@ -62,9 +68,10 @@ export default {
 .error-message {
   color: red;
   font-size: 12px;
-  margin-top: 4px;
-  height: 17px;
+  margin: 0 !important;
+  opacity: 0.5;
 }
+
 .cep-message {
   color: #3c4151;
   opacity: 0.5;
@@ -72,6 +79,7 @@ export default {
   margin-top: 4px;
   height: 17px;
 }
+
 p {
   margin: 4px 0 0 0;
 }
