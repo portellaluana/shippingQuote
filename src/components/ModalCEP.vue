@@ -26,10 +26,10 @@
 
     <div class="container">
       <label for="rua">Rua</label>
-      <input
-        type="text"
-        id="rua"
+      <BaseInput
         v-model="rua"
+        class="normal"
+        id="rua"
         @input="fetchCepInfo"
         placeholder="Digite o nome da rua"
       />
@@ -57,11 +57,13 @@ import { getCidades, getCep } from "@/services/shipping";
 import BaseButton from "./BaseButton.vue";
 import CEPList from "./CEPList.vue";
 import { estados } from "@/utils/estados";
+import BaseInput from "./BaseInput.vue";
 
 export default {
   components: {
     BaseButton,
     CEPList,
+    BaseInput,
   },
 
   data() {

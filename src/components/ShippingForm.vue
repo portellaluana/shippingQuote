@@ -5,7 +5,7 @@
       <div class="container-cep">
         <div class="container-input">
           <label for="SellerCEP">Origem*</label>
-          <input
+          <BaseInput
             v-model="formattedSellerCEP"
             v-mask="'#####-###'"
             class="normal"
@@ -24,7 +24,7 @@
 
         <div class="container-input">
           <label for="destino">Destino*</label>
-          <input
+          <BaseInput
             v-model="formattedRecipientCEP"
             v-mask="'#####-###'"
             class="normal"
@@ -46,7 +46,7 @@
 
         <div class="container-input">
           <label for="Valor">Valor*</label>
-          <input
+          <BaseInput
             v-model="form.declared_value"
             type="number"
             placeholder="R$"
@@ -69,18 +69,18 @@
         >
           <div class="container-input-small">
             <label for="quantidade">Quantidade</label>
-            <input
-              class="input-small"
+            <BaseInput
               v-model="produto.quantity"
+              class="input-small"
               type="number"
               id="quantidade"
             />
           </div>
           <div class="container-input-small">
             <label for="peso">Peso</label>
-            <input
-              class="input-small"
+            <BaseInput
               v-model="produto.weight"
+              class="input-small"
               type="number"
               placeholder="(kg)"
               label="Peso*"
@@ -92,9 +92,9 @@
           </div>
           <div class="container-input-small">
             <label for="largura">Largura</label>
-            <input
-              class="input-small"
+            <BaseInput
               v-model="produto.width"
+              class="input-small"
               type="number"
               placeholder="(cm)"
               id="largura"
@@ -102,9 +102,9 @@
           </div>
           <div class="container-input-small">
             <label for="altura">Altura</label>
-            <input
-              class="input-small"
+            <BaseInput
               v-model="produto.height"
+              class="input-small"
               type="number"
               placeholder="(cm)"
               id="altura"
@@ -112,9 +112,9 @@
           </div>
           <div class="container-input-small">
             <label for="comprimento">Comprimento*</label>
-            <input
-              class="input-small"
+            <BaseInput
               v-model="produto.length"
+              class="input-small"
               type="number"
               placeholder="(cm)"
               id="comprimento"
@@ -147,6 +147,7 @@ import BaseButton from "./BaseButton.vue";
 import ShippingQuoteList from "./ShippingQuoteList.vue";
 import CepValidator from "./CepValidator.vue";
 import CEPList from "./CEPList.vue";
+import BaseInput from "./BaseInput.vue";
 
 export default {
   components: {
@@ -154,6 +155,7 @@ export default {
     ShippingQuoteList,
     CepValidator,
     CEPList,
+    BaseInput,
   },
   data() {
     return {
