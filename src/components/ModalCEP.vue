@@ -181,16 +181,15 @@ label {
   top: 0;
 }
 .cep-search {
-  max-width: 600px;
   margin: 0 auto;
   padding: 20px;
   border: none;
   border-radius: 5px;
   background-color: white;
-  width: 500px;
   height: 500px;
   z-index: 2;
   position: absolute;
+  min-width: 340px;
 }
 
 label {
@@ -230,14 +229,20 @@ select:focus {
   background-image: url("@/assets/delete-button.png");
   background-size: cover;
   background-repeat: no-repeat;
-  position: relative;
-  bottom: 17px;
-  left: 254px;
   border: none;
   padding: 5px 0;
   cursor: pointer;
   border-radius: 5px;
   background-color: transparent;
   opacity: 0.5;
+  display: flex;
+  justify-self: end;
+  margin-bottom: 8px;
+}
+
+@media (max-width: 768px) {
+  .cep-search {
+    min-width: 215px;
+  }
 }
 </style>

@@ -66,10 +66,11 @@ export default {
   width: auto;
   margin: 0;
   padding: 0;
+  font-size: 12px;
+  text-decoration: underline;
 }
 .primary-btn-text:hover {
   background-color: transparent;
-  text-decoration: underline;
 }
 
 @media (max-width: 768px) {
