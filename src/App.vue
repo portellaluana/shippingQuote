@@ -1,25 +1,50 @@
 <template>
   <div id="app">
-    <ShippingForm @show-modal="showModal" />
+    <ShippingForm
+      @show-modal="showModal"
+      @open-modal-historico="openModalHistorico"
+    />
     <ModalCEP v-if="isModalVisible" @close-modal="closeModal" />
+    <ModalHistorico
+      :showModal="isModalHistoricoVisible"
+      :data="shipmentData"
+      @close="closeModalHistorico"
+    />
   </div>
 </template>
 
 <script>
 import ShippingForm from "./components/ShippingForm.vue";
 import ModalCEP from "./components/ModalCEP.vue";
+import ModalHistorico from "./components/ModalHistorico.vue";
 
 export default {
   components: {
     ShippingForm,
     ModalCEP,
+    ModalHistorico,
   },
   data() {
     return {
       isModalVisible: false,
+      isModalHistoricoVisible: false,
+      shipmentData: null,
     };
   },
   methods: {
+    openModalHistorico() {
+      console.log("app entrada");
+
+      const quoteHistory = localStorage.getItem("quote-history");
+      if (quoteHistory) {
+        this.shipmentData = JSON.parse(quoteHistory);
+      }
+
+      this.isModalHistoricoVisible = true;
+    },
+    closeModalHistorico() {
+      this.isModalHistoricoVisible = false;
+    },
     showModal() {
       this.isModalVisible = true;
     },
@@ -29,6 +54,7 @@ export default {
   },
 };
 </script>
+
 
 
 <style>

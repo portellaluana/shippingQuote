@@ -36,22 +36,25 @@ export default {
   cursor: pointer;
   transition: background 0.3s;
 }
-
+.primary-btn:disabled {
+  background-color: #b3b3b368;
+  color: #3c41518a;
+}
 .secondary-btn {
   background-color: white;
-  border: 1px solid #028ecc;
-  color: #028ecc;
+  border: 1px solid #02aeef;
+  color: #02aeef;
   display: flex;
   align-items: center;
 }
 .secondary-btn:hover {
-  background-color: #028ecc;
-  border: 1px solid #028ecc;
+  background-color: #02aeef;
+  border: 1px solid #02aeef;
   color: white;
 }
 
 .link-btn {
-  color: #028ecc;
+  color: #02aeef;
   text-decoration: underline;
   background-color: transparent;
   border: none;
@@ -71,7 +74,9 @@ export default {
   padding: 0;
   font-size: 12px;
   text-decoration: underline;
+  cursor: pointer;
 }
+
 .primary-btn-text:hover {
   background-color: transparent;
 }

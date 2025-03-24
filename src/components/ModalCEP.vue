@@ -212,7 +212,7 @@ input {
 
 input:focus,
 select:focus {
-  outline: 1px solid #028ecc;
+  outline: 1px solid #02aeef;
 }
 
 .error {

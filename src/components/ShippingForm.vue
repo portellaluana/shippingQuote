@@ -142,9 +142,17 @@
           Fazer cotação
         </BaseButton>
       </div>
-      <BaseButton class="secondary-btn" @click.prevent="adicionarProduto">
-        Adicionar mais produtos
-      </BaseButton>
+      <div class="container-botoes">
+        <BaseButton class="secondary-btn" @click.prevent="adicionarProduto">
+          Adicionar mais produtos
+        </BaseButton>
+        <BaseButton
+          class="primary-btn-text"
+          @click.prevent="openModalHistorico"
+        >
+          Ver histórico de cotação
+        </BaseButton>
+      </div>
     </form>
     <ShippingQuoteList :shippingServices="shippingServices" />
   </div>
@@ -229,6 +237,11 @@ export default {
   },
 
   methods: {
+    openModalHistorico() {
+      console.log("form");
+      this.$emit("open-modal-historico");
+    },
+
     openModal() {
       this.$emit("show-modal");
     },
@@ -293,9 +306,18 @@ export default {
         })),
         RecipientCountry: "BR",
       };
+      console.log(requestData);
 
       const response = await postShippingQuote(requestData);
+
       this.shippingServices = response.ShippingSevicesArray || [];
+
+      const existingHistory =
+        JSON.parse(localStorage.getItem("quote-history")) || [];
+
+      existingHistory.push(requestData);
+
+      localStorage.setItem("quote-history", JSON.stringify(existingHistory));
     },
     onBlur() {
       this.isFocused = false;
@@ -412,12 +434,12 @@ ul::-webkit-scrollbar {
 }
 
 ul::-webkit-scrollbar-thumb {
-  background-color: #028ecc;
+  background-color: #02aeef;
   border-radius: 10px;
 }
 
 ul::-webkit-scrollbar-thumb:hover {
-  background-color: #028ecc;
+  background-color: #02aeef;
 }
 
 ul::-webkit-scrollbar-track {
@@ -443,11 +465,20 @@ li:last-child {
   color: #3c41512e;
   margin: 0;
 }
-
+.container-botoes {
+  display: flex;
+  justify-content: space-between;
+}
 @media (max-width: 940px) {
   .delete-button {
     top: 20px;
     right: 10px;
+  }
+  .container-botoes {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
   }
 
   ul {
