@@ -230,8 +230,22 @@ export default {
       const isSellerCepInvalid = this.isCepInvalid(this.form.SellerCEP);
       const isRecipientCepInvalid = this.isCepInvalid(this.form.RecipientCEP);
       const isDeclaredValueInvalid = !this.form.declared_value;
+
+      const isAnyProductInvalid = this.produtos.some((produto) => {
+        return (
+          !produto.weight ||
+          !produto.width ||
+          !produto.height ||
+          !produto.length ||
+          !produto.quantity
+        );
+      });
+
       return (
-        isSellerCepInvalid || isRecipientCepInvalid || isDeclaredValueInvalid
+        isSellerCepInvalid ||
+        isRecipientCepInvalid ||
+        isDeclaredValueInvalid ||
+        isAnyProductInvalid
       );
     },
   },

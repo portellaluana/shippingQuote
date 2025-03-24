@@ -6,35 +6,28 @@
           <h4>Histórico de cotações</h4>
         </div>
         <div class="modal-header">
-          <div id="header-lista">
-            <div v-for="(item, index) in itens" :key="index">
-              <p class="item">{{ item }}</p>
-            </div>
+          <div v-for="(item, index) in itens" :key="index">
+            <p class="header-item">{{ item }}</p>
           </div>
         </div>
-        <div class="modal-content">
-          <div class="list-number">
-            <p>#{{ currentItemIndex + 1 }}</p>
-          </div>
-          <div v-for="(item, index) in data" :key="index">
-            <p><strong>SellerCEP:</strong> {{ item.SellerCEP }}</p>
-            <p><strong>RecipientCEP:</strong> {{ item.RecipientCEP }}</p>
-            <p>
-              <strong>ShipmentInvoiceValue:</strong>
-              {{ item.ShipmentInvoiceValue }}
-            </p>
-            <p>
-              <strong>RecipientCountry:</strong> {{ item.RecipientCountry }}
-            </p>
-            <div
-              v-for="(shippingItem, shippingIndex) in item.ShippingItemArray"
-              :key="shippingIndex"
-            >
-              <p><strong>Height:</strong> {{ shippingItem.Height }}</p>
-              <p><strong>Length:</strong> {{ shippingItem.Length }}</p>
-              <p><strong>Quantity:</strong> {{ shippingItem.Quantity }}</p>
-              <p><strong>Weight:</strong> {{ shippingItem.Weight }}</p>
-              <p><strong>Width:</strong> {{ shippingItem.Width }}</p>
+        <div>
+          <div v-for="(item, index) in data" :key="index" class="modal-content">
+            <div class="modal-content-item">
+              <p class="list-number">#{{ index + 1 }}</p>
+              <p>{{ item.SellerCEP }}</p>
+              <p>{{ item.RecipientCEP }}</p>
+              <p>{{ item.ShipmentInvoiceValue }}</p>
+              <div
+                v-for="(shippingItem, shippingIndex) in item.ShippingItemArray"
+                :key="shippingIndex"
+                class="history-item"
+              >
+                <p>{{ shippingItem.Quantity }}</p>
+                <p>{{ shippingItem.Weight }}</p>
+                <p>{{ shippingItem.Width }}</p>
+                <p>{{ shippingItem.Height }}</p>
+                <p>{{ shippingItem.Length }}</p>
+              </div>
             </div>
           </div>
         </div>
@@ -51,14 +44,15 @@ export default {
   data() {
     return {
       itens: [
-        "SellerCEP",
-        "RecipientCEP",
-        "ShipmentInvoiceValue",
-        "Quantity",
-        "Height",
-        "Length",
-        "Weight",
-        "Width",
+        "",
+        "Origem",
+        "Destino",
+        "Valor",
+        "Quantidade",
+        "Peso",
+        "Largura",
+        "Altura",
+        "Comprimento",
       ],
       currentItemIndex: 0,
     };
@@ -76,6 +70,13 @@ export default {
 </script>
   
   <style scoped>
+.history-item,
+.modal-content-item {
+  display: flex;
+}
+.modal-content-item > p {
+  width: 100px;
+}
 .filter {
   width: 100vw;
   position: absolute;
@@ -90,6 +91,15 @@ export default {
 p {
   display: flex;
   font-size: 10px;
+  width: 100px;
+}
+.list-number {
+  font-size: 14px;
+  font-weight: 800;
+  color: #3c41512e;
+  margin: 0;
+  padding: 0;
+  width: 100px;
 }
 .modal {
   background-color: white;
@@ -100,16 +110,16 @@ p {
   z-index: 2;
   position: absolute;
 }
-
-#header-lista {
+.history-item,
+.modal-content {
   display: flex;
   width: 100%;
   justify-content: space-between;
   margin: 0 auto;
+  align-content: center;
 }
 
-.item {
-  min-width: 118px;
+.header-item {
   font-size: 11px;
   text-transform: uppercase;
 }

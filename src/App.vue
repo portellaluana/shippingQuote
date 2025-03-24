@@ -16,7 +16,7 @@
 <script>
 import ShippingForm from "./components/ShippingForm.vue";
 import ModalCEP from "./components/ModalCEP.vue";
-import ModalHistorico from "./components/ModalHistorico.vue";
+import ModalHistorico from "./components/ModalHistory.vue";
 
 export default {
   components: {

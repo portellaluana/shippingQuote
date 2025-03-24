@@ -37,8 +37,8 @@ export default {
   transition: background 0.3s;
 }
 .primary-btn:disabled {
-  background-color: #b3b3b368;
-  color: #3c41518a;
+  background-color: #02aeef;
+  color: white;
 }
 .secondary-btn {
   background-color: white;
