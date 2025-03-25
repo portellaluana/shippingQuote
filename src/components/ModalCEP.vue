@@ -1,6 +1,6 @@
 <template>
   <div class="cep-search">
-    <button class="close-button" @click="closeModal" />
+    <button class="close-icon" @click="closeModal" />
     <div class="container-uf-cidade">
       <div class="container-estado">
         <label for="estado">Estado (UF)*</label>
@@ -221,10 +221,10 @@ select:focus {
   font-size: 14px;
 }
 
-.close-button {
+.close-icon {
   width: 12px;
   height: 12px;
-  background-image: url("@/assets/delete-button.png");
+  background-image: url("@/assets/close-icon.png");
   background-size: cover;
   background-repeat: no-repeat;
   border: none;

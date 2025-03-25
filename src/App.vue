@@ -33,8 +33,6 @@ export default {
   },
   methods: {
     openModalHistorico() {
-      console.log("app entrada");
-
       const quoteHistory = localStorage.getItem("quote-history");
       if (quoteHistory) {
         this.shipmentData = JSON.parse(quoteHistory);

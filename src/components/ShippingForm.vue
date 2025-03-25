@@ -133,7 +133,7 @@
           <button
             v-if="index !== 0"
             @click="removerProduto(index)"
-            class="delete-button"
+            class="close-icon"
           />
         </li>
       </ul>
@@ -261,7 +261,6 @@ export default {
     }, 100),
 
     openModalHistorico() {
-      console.log("form");
       this.$emit("open-modal-historico");
     },
 
@@ -397,10 +396,10 @@ export default {
   text-align: center;
 }
 
-.delete-button {
+.close-icon {
   width: 12px;
   height: 12px;
-  background-image: url("@/assets/delete-button.png");
+  background-image: url("@/assets/close-icon.png");
   background-size: cover;
   background-repeat: no-repeat;
   position: absolute;
@@ -496,7 +495,7 @@ li:last-child {
   justify-content: space-between;
 }
 @media (max-width: 940px) {
-  .delete-button {
+  .close-icon {
     top: 20px;
     right: 10px;
   }

@@ -1,51 +1,96 @@
 <template>
   <div v-if="showModal" class="modal">
-    <div v-if="data && data.length > 0">
+    <div v-if="localData && localData.length > 0">
       <div class="modal-container">
         <div class="modal-title">
           <h4>Histórico de cotações</h4>
         </div>
-        <div class="modal-header">
+        <div class="modal-header-items">
+          <div class="header-item">
+            <input
+              type="checkbox"
+              v-model="selectAll"
+              @change="toggleSelectAll"
+            />
+          </div>
           <div v-for="(item, index) in itens" :key="index">
             <p class="header-item">{{ item }}</p>
           </div>
         </div>
-        <div>
-          <div v-for="(item, index) in data" :key="index" class="modal-content">
-            <div class="modal-content-item">
-              <p class="list-number">#{{ index + 1 }}</p>
-              <p>{{ item.SellerCEP }}</p>
-              <p>{{ item.RecipientCEP }}</p>
-              <p>{{ item.ShipmentInvoiceValue }}</p>
+      </div>
+      <div class="modal-body">
+        <div v-for="(item, index) in localData" :key="index">
+          <div
+            class="modal-content-item"
+            :class="{ 'no-border': index === localData.length - 1 }"
+          >
+            <input
+              type="checkbox"
+              class="input-checkbox"
+              v-model="selectedItems"
+              :value="item"
+              @change="checkSelection"
+            />
+            <p id="list-number">#{{ index + 1 }}</p>
+            <p>{{ item.SellerCEP }}</p>
+            <p>{{ item.RecipientCEP }}</p>
+            <p>{{ item.ShipmentInvoiceValue }}</p>
+            <div class="shipping-items">
               <div
-                v-for="(shippingItem, shippingIndex) in item.ShippingItemArray"
-                :key="shippingIndex"
+                v-for="(shippingItem, itemIndex) in item.ShippingItemArray"
+                :key="itemIndex"
                 class="history-item"
               >
-                <p>{{ shippingItem.Quantity }}</p>
-                <p>{{ shippingItem.Weight }}</p>
-                <p>{{ shippingItem.Width }}</p>
-                <p>{{ shippingItem.Height }}</p>
-                <p>{{ shippingItem.Length }}</p>
+                <div>
+                  <p><span>Quantidade:</span> {{ shippingItem.Quantity }}</p>
+                </div>
+                <div>
+                  <p><span>Peso:</span> {{ shippingItem.Weight }}</p>
+                </div>
+                <div>
+                  <p><span>Largura:</span> {{ shippingItem.Width }}</p>
+                </div>
+                <div>
+                  <p><span>Altura:</span> {{ shippingItem.Height }}</p>
+                </div>
+                <div>
+                  <p><span>Comprimento:</span> {{ shippingItem.Length }}</p>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-      <button @click="close">Fechar</button>
+      <BaseButton class="close-icon" @click="close" />
+      <div v-if="actionsVisible" class="actions">
+        <div class="delete">
+          <BaseButton class="delete-icon" @click="deleteSelectedItems" />
+        </div>
+        <div class="selected">
+          <span v-if="selectedItems.length === 1"
+            >Deletar cotação selecionada</span
+          >
+          <span v-else-if="selectedItems.length > 1"
+            >Deletar cotações selecionadas</span
+          >
+        </div>
+      </div>
     </div>
   </div>
 
   <div v-if="showModal" class="filter" @click="close"></div>
 </template>
-  
-  <script>
+
+<script>
+import BaseButton from "./BaseButton.vue";
+
 export default {
   data() {
     return {
+      components: {
+        BaseButton,
+      },
       itens: [
-        "",
-        "Origem",
         "Destino",
         "Valor",
         "Quantidade",
@@ -54,29 +99,191 @@ export default {
         "Altura",
         "Comprimento",
       ],
-      currentItemIndex: 0,
+      selectedItems: [],
+      selectAll: false,
+      actionsVisible: false,
+      localData: [],
     };
   },
   props: {
     showModal: Boolean,
     data: Array,
   },
+  watch: {
+    data(newData) {
+      this.localData = [...newData];
+    },
+  },
   methods: {
     close() {
       this.$emit("close");
+      this.selectedItems = [];
+      this.selectAll = false;
+    },
+    toggleSelectAll() {
+      if (this.selectAll) {
+        this.selectedItems = this.localData;
+      } else {
+        this.selectedItems = [];
+      }
+      this.checkSelection();
+    },
+    checkSelection() {
+      this.actionsVisible = this.selectedItems.length > 0;
+      this.selectAll = this.selectedItems.length === this.localData.length;
+    },
+    deleteSelectedItems() {
+      let existingHistory =
+        JSON.parse(localStorage.getItem("quote-history")) || [];
+
+      this.selectedItems.forEach((selectedItem) => {
+        const index = existingHistory.findIndex(
+          (item) =>
+            item.SellerCEP === selectedItem.SellerCEP &&
+            item.RecipientCEP === selectedItem.RecipientCEP
+        );
+        if (index !== -1) {
+          existingHistory.splice(index, 1);
+        }
+      });
+
+      localStorage.setItem("quote-history", JSON.stringify(existingHistory));
+
+      this.selectedItems.forEach((selectedItem) => {
+        const index = this.localData.findIndex(
+          (item) =>
+            item.SellerCEP === selectedItem.SellerCEP &&
+            item.RecipientCEP === selectedItem.RecipientCEP
+        );
+        if (index !== -1) {
+          this.localData.splice(index, 1);
+        }
+      });
+
+      this.selectedItems = [];
+      this.actionsVisible = false;
     },
   },
 };
 </script>
-  
-  <style scoped>
+
+
+
+<style scoped>
+.actions {
+  display: flex;
+  align-items: center;
+  margin: 0 auto;
+  width: 270px;
+  height: 40px;
+  background-color: transparent;
+  gap: 8px;
+  position: absolute;
+  bottom: 16px;
+  right: -50%;
+  left: -50%;
+}
+.delete {
+  background-color: #3c4151;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  width: 40px;
+  border-radius: 4px;
+}
+.selected {
+  display: flex;
+  gap: 2px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  width: 220px;
+  font-size: 11px;
+  color: white;
+  font-weight: 800;
+  text-transform: uppercase;
+  height: 40px;
+  background-color: #3c4151;
+}
+
+.close-icon,
+.delete-icon {
+  background-size: cover;
+  background-repeat: no-repeat;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+}
+.delete-icon {
+  opacity: 1;
+  width: 24px;
+  height: 24px;
+  background-image: url("@/assets/delete-icon.png");
+}
+
+.close-icon {
+  opacity: 0.5;
+  background-color: transparent;
+  width: 12px;
+  height: 12px;
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background-image: url("@/assets/close-icon.png");
+}
+
+input {
+  margin: 0;
+}
+
+.input-checkbox {
+  width: 13px;
+  height: 13px;
+}
+
+.shipping-items {
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 500px;
+}
+
+.history-item {
+  display: flex;
+  margin: 5px;
+  width: 100%;
+  min-width: 500px;
+}
+
+.history-item > div > p > span {
+  display: none;
+}
+
 .history-item,
 .modal-content-item {
   display: flex;
+  align-items: center;
 }
-.modal-content-item > p {
+.modal-content- {
+  margin: 0;
+}
+.modal-content-item > p,
+.history-item > div {
   width: 100px;
+  display: flex;
+  justify-content: left;
 }
+.modal-content-item {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #02aeef;
+  height: 48px;
+}
+
+.modal-content-item.no-border {
+  border-bottom: none;
+}
+
 .filter {
   width: 100vw;
   position: absolute;
@@ -86,20 +293,22 @@ export default {
   align-items: center;
   background-color: rgba(0, 0, 0, 0.323);
   z-index: 1;
-  top: 0;
+  top: -3px;
 }
 p {
   display: flex;
   font-size: 10px;
   width: 100px;
 }
-.list-number {
+#list-number {
   font-size: 14px;
   font-weight: 800;
   color: #3c41512e;
   margin: 0;
   padding: 0;
-  width: 100px;
+  width: 87px;
+  display: flex;
+  justify-content: center;
 }
 .modal {
   background-color: white;
@@ -123,18 +332,25 @@ p {
   font-size: 11px;
   text-transform: uppercase;
 }
-
 .modal-header {
+  display: flex;
+}
+.modal-header-items > div {
+  width: 100px;
+  display: flex;
+}
+.modal-header-items {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  max-width: 900px;
 }
 
-.modal-header h3 {
+.modal-header-items h3 {
   margin: 0;
 }
 
-.modal-header button {
+.modal-header-items button {
   background-color: red;
   color: white;
   border: none;
@@ -171,5 +387,10 @@ table td {
 table th {
   background-color: #f4f4f4;
 }
+
+@media (max-width: 940px) {
+  .history-item div span {
+    display: flex;
+  }
+}
 </style>
-  
