@@ -66,7 +66,7 @@
 
 
 <script>
-import { getCidades, getCep } from "@/services/shipping";
+import { getCidades, getCep } from "@/services/cep";
 import BaseButton from "./BaseButton.vue";
 import CEPList from "./CEPList.vue";
 import { estados } from "@/utils/estados";

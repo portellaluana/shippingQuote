@@ -17,10 +17,10 @@
             id="SellerCEP"
             type="text"
             maxlength="8"
-            @blur="validateOriginCep"
+            @blur="validateSellerCep"
           />
           <div class="container-cep-text">
-            <CepValidator ref="originCepValidator" :cep="form.SellerCEP" />
+            <CepValidator ref="sellerCepValidator" :cep="form.SellerCEP" />
           </div>
         </div>
 
@@ -39,11 +39,11 @@
             id="destino"
             type="text"
             maxlength="8"
-            @blur="validateDestinationCep"
+            @blur="validateRecipientCep"
           />
           <div class="container-cep-text">
             <CepValidator
-              ref="destinationCepValidator"
+              ref="recipientCepValidator"
               :cep="form.RecipientCEP"
             />
           </div>
@@ -54,10 +54,11 @@
           <BaseInput
             required
             v-model="form.declared_value"
-            type="number"
+            type="text"
             placeholder="R$"
             id="Valor"
             class="valor"
+            @input="formatValue"
           />
         </div>
       </div>
@@ -164,6 +165,8 @@ import BaseButton from "./BaseButton.vue";
 import ShippingQuoteList from "./ShippingQuoteList.vue";
 import CepValidator from "./CepValidator.vue";
 import BaseInput from "./BaseInput.vue";
+import formatter from "../utils/formatterCurrency.js";
+import _ from "lodash";
 
 export default {
   components: {
@@ -251,6 +254,12 @@ export default {
   },
 
   methods: {
+    formatValue: _.debounce(function () {
+      let rawValue = this.form.declared_value.replace(/[^\d]/g, "");
+      let numericValue = parseFloat(rawValue) / 100;
+      this.form.declared_value = formatter.currencyBrazil(numericValue);
+    }, 100),
+
     openModalHistorico() {
       console.log("form");
       this.$emit("open-modal-historico");
@@ -293,12 +302,12 @@ export default {
       this.produtos.splice(index, 1);
     },
 
-    validateOriginCep() {
-      this.$refs.originCepValidator.validateCep(this.form.SellerCEP);
+    validateSellerCep() {
+      this.$refs.sellerCepValidator.validateCep(this.form.SellerCEP);
     },
 
-    validateDestinationCep() {
-      this.$refs.destinationCepValidator.validateCep(this.form.RecipientCEP);
+    validateRecipientCep() {
+      this.$refs.recipientCepValidator.validateCep(this.form.RecipientCEP);
     },
 
     async handleData() {
@@ -306,10 +315,13 @@ export default {
         return;
       }
 
+      const rawValue = this.form.declared_value.replace(/[^\d]/g, "");
+      const numericValue = parseFloat(rawValue) / 100;
+
       const requestData = {
         SellerCEP: this.form.SellerCEP,
         RecipientCEP: this.form.RecipientCEP,
-        ShipmentInvoiceValue: this.form.declared_value,
+        ShipmentInvoiceValue: numericValue,
         ShippingServiceCode: null,
         ShippingItemArray: this.produtos.map((produto) => ({
           Height: produto.height,
