@@ -66,10 +66,9 @@ export default {
 
 <style scoped>
 .error-message {
-  color: red;
+  color: #ff355a;
   font-size: 12px;
   margin: 0 !important;
-  opacity: 0.5;
 }
 
 .cep-message {

@@ -228,6 +228,7 @@ select:focus {
   background-size: cover;
   background-repeat: no-repeat;
   border: none;
+  top: 8px;
   padding: 5px 0;
   cursor: pointer;
   border-radius: 5px;

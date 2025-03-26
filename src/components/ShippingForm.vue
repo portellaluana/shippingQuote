@@ -1,11 +1,12 @@
 <template>
   <div id="shippingForm">
+    <Loading v-if="isLoading" />
     <form @submit.prevent="handleData">
       <div class="container-cep">
         <div class="container-input">
           <div class="container-header-input">
             <label for="SellerCEP">Origem*</label>
-            <BaseButton type="submit" class="link-btn" @click="openModal">
+            <BaseButton class="link-btn" @click="openModal">
               Pesquisar CEP
             </BaseButton>
           </div>
@@ -27,7 +28,7 @@
         <div class="container-input">
           <div class="container-header-input">
             <label for="destino">Destino*</label>
-            <BaseButton type="submit" class="link-btn" @click="openModal">
+            <BaseButton class="link-btn" @click="openModal">
               Pesquisar CEP
             </BaseButton>
           </div>
@@ -150,12 +151,14 @@
         <BaseButton
           class="primary-btn-text"
           @click.prevent="openModalHistorico"
+          :disabled="!hasQuoteHistory"
         >
           Ver histórico de cotação
         </BaseButton>
       </div>
     </form>
     <ShippingQuoteList :shippingServices="shippingServices" />
+    <BaseToast ref="toast" />
   </div>
 </template>
 
@@ -167,6 +170,9 @@ import CepValidator from "./CepValidator.vue";
 import BaseInput from "./BaseInput.vue";
 import formatter from "../utils/formatterCurrency.js";
 import _ from "lodash";
+import Loading from "./Loading.vue";
+import BaseToast from "./BaseToast.vue";
+import emitter from "@/utils/eventBus";
 
 export default {
   components: {
@@ -174,6 +180,8 @@ export default {
     ShippingQuoteList,
     CepValidator,
     BaseInput,
+    Loading,
+    BaseToast,
   },
   data() {
     return {
@@ -193,10 +201,21 @@ export default {
         },
       ],
       isAddingProduct: false,
+      isLoading: false,
+      addToast: null,
     };
   },
 
+  created() {
+    emitter.on("register-toast", (addToastMethod) => {
+      this.addToast = addToastMethod;
+    });
+  },
   computed: {
+    hasQuoteHistory() {
+      const quoteHistory = JSON.parse(localStorage.getItem("quote-history"));
+      return quoteHistory && quoteHistory.length > 0;
+    },
     quoteListStyle() {
       if (this.produtos.length > 3) {
         return {
@@ -261,7 +280,11 @@ export default {
     }, 100),
 
     openModalHistorico() {
-      this.$emit("open-modal-historico");
+      const quoteHistory = JSON.parse(localStorage.getItem("quote-history"));
+
+      if (quoteHistory && quoteHistory.length > 0) {
+        this.$emit("open-modal-historico");
+      }
     },
 
     openModal() {
@@ -314,6 +337,8 @@ export default {
         return;
       }
 
+      this.isLoading = true;
+
       const rawValue = this.form.declared_value.replace(/[^\d]/g, "");
       const numericValue = parseFloat(rawValue) / 100;
 
@@ -333,16 +358,27 @@ export default {
       };
       console.log(requestData);
 
-      const response = await postShippingQuote(requestData);
+      try {
+        const response = await postShippingQuote(requestData);
+        this.shippingServices = response.ShippingSevicesArray || [];
 
-      this.shippingServices = response.ShippingSevicesArray || [];
+        const existingHistory =
+          JSON.parse(localStorage.getItem("quote-history")) || [];
 
-      const existingHistory =
-        JSON.parse(localStorage.getItem("quote-history")) || [];
+        existingHistory.push(requestData);
 
-      existingHistory.push(requestData);
-
-      localStorage.setItem("quote-history", JSON.stringify(existingHistory));
+        localStorage.setItem("quote-history", JSON.stringify(existingHistory));
+      } catch (error) {
+        if (this.addToast) {
+          this.addToast(
+            "error",
+            "Erro na requisição",
+            "Não foi possível realizar a cotação."
+          );
+        }
+      } finally {
+        this.isLoading = false;
+      }
     },
     onBlur() {
       this.isFocused = false;

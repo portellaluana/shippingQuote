@@ -17,11 +17,13 @@
 
     <div class="error-message">
       <p v-if="isRequiredError">Campo obrigatório</p>
+
+      <p v-if="validateLength && isLengthError">Digite ao menos 3 caracteres</p>
     </div>
   </div>
 </template>
-  
-  <script>
+
+<script>
 export default {
   name: "BaseInput",
   props: {
@@ -73,10 +75,16 @@ export default {
       type: Function,
       default: null,
     },
+
+    validateLength: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
       isRequiredError: false,
+      isLengthError: false,
     };
   },
   methods: {
@@ -90,6 +98,10 @@ export default {
       } else {
         this.isRequiredError = false;
       }
+
+      if (this.validateLength) {
+        this.validateLengthError();
+      }
     },
     handleFocus(event) {
       if (this.onFocus) {
@@ -97,6 +109,7 @@ export default {
       }
 
       this.isRequiredError = false;
+      this.isLengthError = false;
     },
     handleInput(event) {
       if (this.onInput) {
@@ -104,17 +117,24 @@ export default {
       }
 
       this.$emit("update:modelValue", event.target.value);
+
+      if (this.validateLength) {
+        this.validateLengthError();
+      }
     },
     handleKeydown(event) {
       if (this.type === "number" && event.key === "Enter") {
         console.log("Enter pressionado!");
       }
     },
+    validateLengthError() {
+      this.isLengthError = this.modelValue.length < 3;
+    },
   },
 };
 </script>
-  
-  <style scoped>
+
+<style scoped>
 .container-input {
   width: 100%;
 }
@@ -123,6 +143,7 @@ p {
   margin: 4px 0 0 0;
   text-align: left;
 }
+
 input {
   background: #f1f5f9;
   border-radius: 4px;
@@ -140,10 +161,8 @@ input:focus {
 }
 
 .error-message {
-  color: red;
+  color: #ff355a;
   font-size: 11px;
-  opacity: 0.5;
   margin: 0 !important;
 }
 </style>
-  
