@@ -31,30 +31,37 @@
               :value="item"
               @change="checkSelection"
             />
-            <p id="list-number">#{{ index + 1 }}</p>
-            <p>{{ item.SellerCEP }}</p>
-            <p>{{ item.RecipientCEP }}</p>
-            <p>{{ item.ShipmentInvoiceValue }}</p>
-            <div class="shipping-items">
-              <div
-                v-for="(shippingItem, itemIndex) in item.ShippingItemArray"
-                :key="itemIndex"
-                class="history-item"
-              >
-                <div>
-                  <p><span>Quantidade:</span> {{ shippingItem.Quantity }}</p>
-                </div>
-                <div>
-                  <p><span>Peso:</span> {{ shippingItem.Weight }}</p>
-                </div>
-                <div>
-                  <p><span>Largura:</span> {{ shippingItem.Width }}</p>
-                </div>
-                <div>
-                  <p><span>Altura:</span> {{ shippingItem.Height }}</p>
-                </div>
-                <div>
-                  <p><span>Comprimento:</span> {{ shippingItem.Length }}</p>
+            <div class="container-cep">
+              <p id="list-number">#{{ index + 1 }}</p>
+              <div class="content-cep">
+                <p><span>Origem:</span> {{ item.SellerCEP }}</p>
+                <p><span>Destino:</span> {{ item.RecipientCEP }}</p>
+                <p>
+                  <span>Valor declarado:</span>R$
+                  {{ item.ShipmentInvoiceValue }}
+                </p>
+              </div>
+              <div class="shipping-items">
+                <div
+                  v-for="(shippingItem, itemIndex) in item.ShippingItemArray"
+                  :key="itemIndex"
+                  class="history-item"
+                >
+                  <div>
+                    <p><span>Quantidade:</span> {{ shippingItem.Quantity }}</p>
+                  </div>
+                  <div>
+                    <p><span>Peso:</span> {{ shippingItem.Weight }}</p>
+                  </div>
+                  <div>
+                    <p><span>Largura:</span> {{ shippingItem.Width }}</p>
+                  </div>
+                  <div>
+                    <p><span>Altura:</span> {{ shippingItem.Height }}</p>
+                  </div>
+                  <div>
+                    <p><span>Comprimento:</span> {{ shippingItem.Length }}</p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -91,6 +98,7 @@ export default {
         BaseButton,
       },
       itens: [
+        "Origem",
         "Destino",
         "Valor",
         "Quantidade",
@@ -237,6 +245,18 @@ input {
   margin: 0;
 }
 
+.content-cep,
+.container-cep {
+  display: flex;
+}
+.content-cep {
+  margin: 12px 0;
+}
+
+.content-cep p span {
+  display: none;
+}
+
 .input-checkbox {
   width: 13px;
   height: 13px;
@@ -277,7 +297,6 @@ input {
   display: flex;
   align-items: center;
   border-bottom: 1px solid #02aeef;
-  height: 48px;
 }
 
 .modal-content-item.no-border {
@@ -309,15 +328,17 @@ p {
   width: 87px;
   display: flex;
   justify-content: center;
+  align-items: center;
 }
 .modal {
   background-color: white;
-  padding: 20px;
+  padding: 22px;
   border-radius: 8px;
-  width: 100%;
+  width: auto;
   overflow-y: auto;
   z-index: 2;
   position: absolute;
+  min-height: 254px;
 }
 .history-item,
 .modal-content {
@@ -343,7 +364,6 @@ p {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  max-width: 900px;
 }
 
 .modal-header-items h3 {
@@ -389,8 +409,56 @@ table th {
 }
 
 @media (max-width: 940px) {
-  .history-item div span {
+  .history-item div p span,
+  .modal-content-item div p span {
     display: flex;
+    font-weight: 400;
+    margin-right: 8px;
+  }
+  .modal-content-item div p {
+    font-weight: 800;
+    width: auto;
+  }
+  .shipping-items {
+    width: auto;
+    display: inline-flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+  }
+  .content-cep {
+    display: flex;
+    margin: 0;
+    flex-wrap: wrap;
+  }
+  .container-cep {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: start;
+    margin: 12px 0;
+  }
+  #list-number {
+    width: auto;
+  }
+  .modal-header-items {
+    display: none;
+  }
+  .input-checkbox {
+    margin-right: 16px;
+  }
+
+  .modal-content-item div p {
+    margin-right: 16px;
+  }
+  .history-item,
+  .history-item div,
+  .shipping-items {
+    width: auto;
+    max-width: 100%;
+    min-width: max-content;
+  }
+  .history-item {
+    display: flex;
+    flex-wrap: wrap;
   }
 }
 </style>
