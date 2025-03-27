@@ -41,7 +41,7 @@ export default {
 
       setTimeout(() => {
         this.toasts.shift();
-      }, 50000000);
+      }, 5000);
     },
 
     removeToast(index) {

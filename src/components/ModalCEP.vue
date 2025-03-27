@@ -187,25 +187,29 @@ label {
 }
 .filter {
   width: 100vw;
-  position: absolute;
   height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: rgba(0, 0, 0, 0.323);
+  background-color: rgba(0, 0, 0, 0.5);
   z-index: 1;
-  top: 0;
 }
 .cep-search {
-  margin: 0 auto;
-  padding: 20px;
-  border: none;
-  border-radius: 5px;
   background-color: white;
-  height: auto;
+  padding: 22px;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 900px;
+  max-height: 80vh;
+  overflow-y: auto;
   z-index: 2;
-  position: absolute;
-  min-width: 430px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .primary-btn {
@@ -273,7 +277,18 @@ select:focus {
 }
 @media (max-width: 940px) {
   .cep-search {
-    min-width: 230px;
+    background-color: white;
+    padding: 22px;
+    border-radius: 8px;
+    width: 80%;
+    max-width: 600px;
+    max-height: 80vh;
+    overflow-y: auto;
+    z-index: 2;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
   }
   .container-uf-cidade {
     display: inline-flex;

@@ -17,7 +17,7 @@
             class="normal"
             id="SellerCEP"
             type="text"
-            maxlength="8"
+            :maxlength="8"
             @blur="validateSellerCep"
           />
           <div class="container-cep-text">
@@ -39,7 +39,7 @@
             class="normal"
             id="destino"
             type="text"
-            maxlength="8"
+            :maxlength="8"
             @blur="validateRecipientCep"
           />
           <div class="container-cep-text">
@@ -202,6 +202,7 @@ export default {
       isAddingProduct: false,
       isLoading: false,
       addToast: null,
+      onFocus: null,
     };
   },
 
@@ -543,11 +544,13 @@ li:last-child {
   display: flex;
   justify-content: space-between;
 }
+
 @media (max-width: 940px) {
   .close-icon {
     top: 20px;
     right: 10px;
   }
+
   .container-botoes {
     display: inline-flex;
     flex-direction: column;
