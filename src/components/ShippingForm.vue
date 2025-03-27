@@ -151,7 +151,6 @@
         <BaseButton
           class="primary-btn-text"
           @click.prevent="openModalHistorico"
-          :disabled="!hasQuoteHistory"
         >
           Ver histórico de cotação
         </BaseButton>
@@ -284,6 +283,10 @@ export default {
 
       if (quoteHistory && quoteHistory.length > 0) {
         this.$emit("open-modal-historico");
+      } else {
+        if (this.addToast) {
+          this.addToast("info", "Histórico vazio", "Nenhuma cotação realizada");
+        }
       }
     },
 
