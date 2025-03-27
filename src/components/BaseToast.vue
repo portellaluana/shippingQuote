@@ -32,12 +32,18 @@ export default {
   },
   methods: {
     addToast(type, title, message) {
+      if (this.toasts.length > 0) {
+        this.toasts.shift();
+      }
+
       const toast = { type, title, message };
       this.toasts.push(toast);
+
       setTimeout(() => {
         this.toasts.shift();
       }, 5000);
     },
+
     removeToast(index) {
       this.toasts.splice(index, 1);
     },
@@ -72,7 +78,12 @@ export default {
   justify-content: center;
   height: 80px;
   gap: 16px;
-  border-left: 12px solid #ff355a;
+}
+.toast-container {
+  z-index: 3;
+  position: absolute;
+  top: 20px;
+  right: -200px;
 }
 img {
   width: 20px;
@@ -104,9 +115,17 @@ p {
   font-size: 12px;
   margin: 0;
 }
-.toast-container {
-  position: absolute;
-  top: 20px;
-  right: -200px;
+
+.toast-success {
+  border-left: 12px solid #48d666;
+}
+.toast-error {
+  border-left: 12px solid #ff355a;
+}
+.toast-info {
+  border-left: 12px solid #2f86e7;
+}
+.toast-warning {
+  border-left: 12px solid #fbc226;
 }
 </style>

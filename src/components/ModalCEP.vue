@@ -1,4 +1,5 @@
 <template>
+  <BaseToast ref="toast" />
   <div class="cep-search">
     <button class="close-icon" @click="closeModal" />
     <div class="container-uf-cidade">
@@ -71,12 +72,15 @@ import BaseButton from "./BaseButton.vue";
 import CEPList from "./CEPList.vue";
 import { estados } from "@/utils/estados";
 import BaseInput from "./BaseInput.vue";
+import BaseToast from "./BaseToast.vue";
+import emitter from "@/utils/eventBus";
 
 export default {
   components: {
     BaseButton,
     CEPList,
     BaseInput,
+    BaseToast,
   },
 
   data() {
@@ -88,7 +92,20 @@ export default {
       cepInfo: [],
       errorMessage: "",
       estados,
+      addToast: null,
     };
+  },
+
+  created() {
+    emitter.on("register-toast", (addToastMethod) => {
+      this.addToast = addToastMethod;
+    });
+
+    emitter.on("show-toast", (toastData) => {
+      if (this.addToast) {
+        this.addToast(toastData.type, toastData.title, toastData.message);
+      }
+    });
   },
 
   methods: {
@@ -124,10 +141,17 @@ export default {
           }
         } catch (error) {
           if (error.response && error.response.status === 500) {
-            this.errorMessage = "Erro 500: Tente novamente mais tarde.";
+            if (this.addToast) {
+              this.addToast("error", "Erro 500", "Tente novamente mais tarde.");
+            }
           } else {
-            this.errorMessage =
-              "Erro na requisição de CEP. Tente novamente mais tarde.";
+            if (this.addToast) {
+              this.addToast(
+                "error",
+                "Erro na requisição de CEP",
+                "Tente novamente mais tarde."
+              );
+            }
           }
         }
       }

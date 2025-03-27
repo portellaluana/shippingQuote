@@ -29,6 +29,8 @@
 
 <script>
 import BaseButton from "./BaseButton.vue";
+import emitter from "@/utils/eventBus";
+
 export default {
   components: {
     BaseButton,
@@ -49,7 +51,15 @@ export default {
       const cep = String(info).replace("-", "");
       navigator.clipboard.writeText(cep);
 
-      this.$emit("close-modal");
+      emitter.emit("show-toast", {
+        type: "success",
+        title: "CEP copiado",
+        message: "CEP copiado com sucesso.",
+      });
+
+      setTimeout(() => {
+        this.$emit("close-modal");
+      }, 1500);
     },
   },
 };

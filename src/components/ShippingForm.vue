@@ -356,11 +356,21 @@ export default {
         })),
         RecipientCountry: "BR",
       };
-      console.log(requestData);
 
       try {
         const response = await postShippingQuote(requestData);
         this.shippingServices = response.ShippingSevicesArray || [];
+
+        if (this.shippingServices.every((item) => item.Error === true)) {
+          if (this.addToast) {
+            this.addToast(
+              "error",
+              "Erro na cotação",
+              "Nenhuma cotação válida."
+            );
+          }
+          return;
+        }
 
         const existingHistory =
           JSON.parse(localStorage.getItem("quote-history")) || [];

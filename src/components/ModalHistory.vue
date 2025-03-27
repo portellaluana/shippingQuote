@@ -6,13 +6,6 @@
           <h4>Histórico de cotações</h4>
         </div>
         <div class="modal-header-items">
-          <div class="header-item">
-            <input
-              type="checkbox"
-              v-model="selectAll"
-              @change="toggleSelectAll"
-            />
-          </div>
           <div v-for="(item, index) in itens" :key="index">
             <p class="header-item">{{ item }}</p>
           </div>
@@ -24,13 +17,6 @@
             class="modal-content-item"
             :class="{ 'no-border': index === localData.length - 1 }"
           >
-            <input
-              type="checkbox"
-              class="input-checkbox"
-              v-model="selectedItems"
-              :value="item"
-              @change="checkSelection"
-            />
             <div class="container-cep">
               <p id="list-number">#{{ index + 1 }}</p>
               <div class="content-cep">
@@ -69,19 +55,6 @@
         </div>
       </div>
       <BaseButton class="close-icon" @click="close" />
-      <div v-if="actionsVisible" class="actions">
-        <div class="delete">
-          <BaseButton class="delete-icon" @click="deleteSelectedItems" />
-        </div>
-        <div class="selected">
-          <span v-if="selectedItems.length === 1"
-            >Deletar cotação selecionada</span
-          >
-          <span v-else-if="selectedItems.length > 1"
-            >Deletar cotações selecionadas</span
-          >
-        </div>
-      </div>
     </div>
   </div>
 
@@ -107,9 +80,6 @@ export default {
         "Altura",
         "Comprimento",
       ],
-      selectedItems: [],
-      selectAll: false,
-      actionsVisible: false,
       localData: [],
     };
   },
@@ -125,56 +95,10 @@ export default {
   methods: {
     close() {
       this.$emit("close");
-      this.selectedItems = [];
-      this.selectAll = false;
-    },
-    toggleSelectAll() {
-      if (this.selectAll) {
-        this.selectedItems = this.localData;
-      } else {
-        this.selectedItems = [];
-      }
-      this.checkSelection();
-    },
-    checkSelection() {
-      this.actionsVisible = this.selectedItems.length > 0;
-      this.selectAll = this.selectedItems.length === this.localData.length;
-    },
-    deleteSelectedItems() {
-      let existingHistory =
-        JSON.parse(localStorage.getItem("quote-history")) || [];
-
-      this.selectedItems.forEach((selectedItem) => {
-        const index = existingHistory.findIndex(
-          (item) =>
-            item.SellerCEP === selectedItem.SellerCEP &&
-            item.RecipientCEP === selectedItem.RecipientCEP
-        );
-        if (index !== -1) {
-          existingHistory.splice(index, 1);
-        }
-      });
-
-      localStorage.setItem("quote-history", JSON.stringify(existingHistory));
-
-      this.selectedItems.forEach((selectedItem) => {
-        const index = this.localData.findIndex(
-          (item) =>
-            item.SellerCEP === selectedItem.SellerCEP &&
-            item.RecipientCEP === selectedItem.RecipientCEP
-        );
-        if (index !== -1) {
-          this.localData.splice(index, 1);
-        }
-      });
-
-      this.selectedItems = [];
-      this.actionsVisible = false;
     },
   },
 };
 </script>
-
 
 
 <style scoped>
@@ -215,8 +139,7 @@ export default {
   background-color: #3c4151;
 }
 
-.close-icon,
-.delete-icon {
+.close-icon {
   background-size: cover;
   background-repeat: no-repeat;
   border: none;
@@ -255,11 +178,6 @@ input {
 
 .content-cep p span {
   display: none;
-}
-
-.input-checkbox {
-  width: 13px;
-  height: 13px;
 }
 
 .shipping-items {
@@ -441,24 +359,6 @@ table th {
   }
   .modal-header-items {
     display: none;
-  }
-  .input-checkbox {
-    margin-right: 16px;
-  }
-
-  .modal-content-item div p {
-    margin-right: 16px;
-  }
-  .history-item,
-  .history-item div,
-  .shipping-items {
-    width: auto;
-    max-width: 100%;
-    min-width: max-content;
-  }
-  .history-item {
-    display: flex;
-    flex-wrap: wrap;
   }
 }
 </style>

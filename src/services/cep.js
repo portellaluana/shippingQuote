@@ -53,7 +53,7 @@ export const getCidades = (estado) => {
 
 export const getCep = (estado, cidade, rua) => {
   return apiViaCep
-    .get(`/${estado}/${cidade}/${rua}/jso/`)
+    .get(`/${estado}/${cidade}/${rua}/json/`)
     .then((response) => {
       return response.data;
     })
