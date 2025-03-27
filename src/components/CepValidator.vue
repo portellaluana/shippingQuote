@@ -1,9 +1,9 @@
 <template>
   <div>
-    <div v-if="showError" class="error-message">
+    <div v-if="status === 'error'" class="error-message">
       <p>CEP inválido ou não encontrado.</p>
     </div>
-    <div v-if="cepValid" class="cep-message">
+    <div v-if="status === 'ok'" class="cep-message">
       <p>{{ infoCep }}</p>
     </div>
   </div>
@@ -21,8 +21,7 @@ export default {
   },
   data() {
     return {
-      showError: false,
-      cepValid: false,
+      status: "",
       infoCep: "",
     };
   },
@@ -31,8 +30,7 @@ export default {
       if (newCep.length === 8) {
         this.validateCep(newCep);
       } else if (newCep.length === 0) {
-        this.showError = false;
-        this.cepValid = false;
+        this.status = "";
         this.infoCep = "";
       }
     },
@@ -47,17 +45,14 @@ export default {
         const response = await getCepInfo(cep);
 
         if (response && response.Message === "CEP não encontrado") {
-          this.showError = true;
-          this.cepValid = false;
+          this.status = "error";
         } else {
-          this.showError = false;
-          this.cepValid = true;
+          this.status = "ok";
           this.infoCep = response.Street || response.City + "-" + response.UF;
         }
       } catch (error) {
         console.error("Erro ao validar o CEP:", error);
-        this.showError = true;
-        this.cepValid = false;
+        this.status = "error";
       }
     },
   },

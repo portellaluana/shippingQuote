@@ -41,7 +41,7 @@ export default {
 
       setTimeout(() => {
         this.toasts.shift();
-      }, 5000);
+      }, 50000000);
     },
 
     removeToast(index) {
@@ -83,7 +83,7 @@ export default {
   z-index: 3;
   position: absolute;
   top: 20px;
-  right: -200px;
+  right: 0;
 }
 img {
   width: 20px;
@@ -127,5 +127,15 @@ p {
 }
 .toast-warning {
   border-left: 12px solid #fbc226;
+}
+@media (max-width: 940px) {
+  .toast-container {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    right: auto;
+    bottom: auto;
+  }
 }
 </style>

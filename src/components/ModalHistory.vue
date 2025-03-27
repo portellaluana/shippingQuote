@@ -5,55 +5,30 @@
         <div class="modal-title">
           <h4>Histórico de cotações</h4>
         </div>
-        <div class="modal-header-items">
+        <div class="modal-header">
           <div v-for="(item, index) in itens" :key="index">
             <p class="header-item">{{ item }}</p>
           </div>
         </div>
       </div>
-      <div class="modal-body">
-        <div v-for="(item, index) in localData" :key="index">
-          <div
-            class="modal-content-item"
-            :class="{ 'no-border': index === localData.length - 1 }"
-          >
-            <div class="container-cep">
-              <p id="list-number">#{{ index + 1 }}</p>
-              <div class="content-cep">
-                <p><span>Origem:</span> {{ item.SellerCEP }}</p>
-                <p><span>Destino:</span> {{ item.RecipientCEP }}</p>
-                <p>
-                  <span>Valor declarado:</span>R$
-                  {{ item.ShipmentInvoiceValue }}
-                </p>
-              </div>
-              <div class="shipping-items">
-                <div
-                  v-for="(shippingItem, itemIndex) in item.ShippingItemArray"
-                  :key="itemIndex"
-                  class="history-item"
-                >
-                  <div>
-                    <p><span>Quantidade:</span> {{ shippingItem.Quantity }}</p>
-                  </div>
-                  <div>
-                    <p><span>Peso:</span> {{ shippingItem.Weight }}</p>
-                  </div>
-                  <div>
-                    <p><span>Largura:</span> {{ shippingItem.Width }}</p>
-                  </div>
-                  <div>
-                    <p><span>Altura:</span> {{ shippingItem.Height }}</p>
-                  </div>
-                  <div>
-                    <p><span>Comprimento:</span> {{ shippingItem.Length }}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+      <ul v-for="(item, index) in localData" :key="index">
+        <li id="list-number">#{{ index + 1 }}</li>
+        <li><span>Origem:</span> {{ item.SellerCEP }}</li>
+        <li><span>Destino:</span> {{ item.RecipientCEP }}</li>
+        <li><span>Valor declarado:</span>R$ {{ item.ShipmentInvoiceValue }}</li>
+
+        <div
+          v-for="(shippingItem, idx) in item.ShippingItemArray"
+          :key="idx"
+          class="shipping-array"
+        >
+          <li><span>Quantidade:</span> {{ shippingItem.Quantity }}</li>
+          <li><span>Peso:</span> {{ shippingItem.Weight }}</li>
+          <li><span>Largura:</span> {{ shippingItem.Width }}</li>
+          <li><span>Altura:</span> {{ shippingItem.Height }}</li>
+          <li><span>Comprimento:</span> {{ shippingItem.Length }}</li>
         </div>
-      </div>
+      </ul>
       <BaseButton class="close-icon" @click="close" />
     </div>
   </div>
@@ -71,6 +46,7 @@ export default {
         BaseButton,
       },
       itens: [
+        "",
         "Origem",
         "Destino",
         "Valor",
@@ -102,20 +78,23 @@ export default {
 
 
 <style scoped>
-.actions {
-  display: flex;
-  align-items: center;
-  margin: 0 auto;
-  width: 270px;
-  height: 40px;
-  background-color: transparent;
-  gap: 8px;
-  position: absolute;
-  bottom: 16px;
-  right: -50%;
-  left: -50%;
+li {
+  list-style: none;
 }
-.delete {
+ul {
+  border-bottom: 1px solid #02aeef;
+}
+ul,
+.shipping-array {
+  display: inline-flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  padding: 0;
+}
+li span {
+  display: none;
+}
+/* .delete {
   background-color: #3c4151;
   display: flex;
   align-items: center;
@@ -123,21 +102,7 @@ export default {
   height: 40px;
   width: 40px;
   border-radius: 4px;
-}
-.selected {
-  display: flex;
-  gap: 2px;
-  align-items: center;
-  justify-content: center;
-  border-radius: 4px;
-  width: 220px;
-  font-size: 11px;
-  color: white;
-  font-weight: 800;
-  text-transform: uppercase;
-  height: 40px;
-  background-color: #3c4151;
-}
+} */
 
 .close-icon {
   background-size: cover;
@@ -145,15 +110,6 @@ export default {
   border: none;
   cursor: pointer;
   border-radius: 5px;
-}
-.delete-icon {
-  opacity: 1;
-  width: 24px;
-  height: 24px;
-  background-image: url("@/assets/delete-icon.png");
-}
-
-.close-icon {
   opacity: 0.5;
   background-color: transparent;
   width: 12px;
@@ -163,63 +119,12 @@ export default {
   right: 12px;
   background-image: url("@/assets/close-icon.png");
 }
-
-input {
-  margin: 0;
-}
-
-.content-cep,
-.container-cep {
-  display: flex;
-}
-.content-cep {
-  margin: 12px 0;
-}
-
-.content-cep p span {
-  display: none;
-}
-
-.shipping-items {
-  display: flex;
-  flex-wrap: wrap;
-  max-width: 500px;
-}
-
-.history-item {
-  display: flex;
-  margin: 5px;
-  width: 100%;
-  min-width: 500px;
-}
-
-.history-item > div > p > span {
-  display: none;
-}
-
-.history-item,
-.modal-content-item {
-  display: flex;
-  align-items: center;
-}
-.modal-content- {
-  margin: 0;
-}
-.modal-content-item > p,
-.history-item > div {
-  width: 100px;
-  display: flex;
-  justify-content: left;
-}
-.modal-content-item {
-  display: flex;
-  align-items: center;
-  border-bottom: 1px solid #02aeef;
-}
-
-.modal-content-item.no-border {
-  border-bottom: none;
-}
+/* .delete-icon {
+  opacity: 1;
+  width: 24px;
+  height: 24px;
+  background-image: url("@/assets/delete-icon.png");
+} */
 
 .filter {
   width: 100vw;
@@ -232,18 +137,19 @@ input {
   z-index: 1;
   top: -3px;
 }
+
 p {
   display: flex;
   font-size: 10px;
   width: 100px;
 }
+
 #list-number {
   font-size: 14px;
   font-weight: 800;
   color: #3c41512e;
   margin: 0;
   padding: 0;
-  width: 87px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -258,14 +164,6 @@ p {
   position: absolute;
   min-height: 254px;
 }
-.history-item,
-.modal-content {
-  display: flex;
-  width: 100%;
-  justify-content: space-between;
-  margin: 0 auto;
-  align-content: center;
-}
 
 .header-item {
   font-size: 11px;
@@ -274,21 +172,21 @@ p {
 .modal-header {
   display: flex;
 }
-.modal-header-items > div {
+.modal-header > div {
   width: 100px;
   display: flex;
 }
-.modal-header-items {
+.modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.modal-header-items h3 {
+.modal-header h3 {
   margin: 0;
 }
 
-.modal-header-items button {
+.modal-header button {
   background-color: red;
   color: white;
   border: none;
@@ -297,67 +195,35 @@ p {
   cursor: pointer;
 }
 
-.modal-body {
-  margin-top: 20px;
-}
-
-.modal-body h4 {
-  margin: 10px 0 5px 0;
-}
-
-.modal-body p {
-  margin: 5px 0;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
-}
-
-table th,
-table td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: left;
-}
-
-table th {
-  background-color: #f4f4f4;
-}
-
 @media (max-width: 940px) {
-  .history-item div p span,
-  .modal-content-item div p span {
-    display: flex;
-    font-weight: 400;
-    margin-right: 8px;
-  }
-  .modal-content-item div p {
-    font-weight: 800;
-    width: auto;
-  }
-  .shipping-items {
-    width: auto;
+  ul,
+  .shipping-array {
     display: inline-flex;
     flex-direction: column;
-    flex-wrap: wrap;
-  }
-  .content-cep {
-    display: flex;
-    margin: 0;
-    flex-wrap: wrap;
-  }
-  .container-cep {
-    display: inline-flex;
-    flex-direction: column;
+    padding: 0;
     align-items: start;
-    margin: 12px 0;
+    padding-bottom: 16px;
+    margin-right: 16px;
   }
-  #list-number {
-    width: auto;
+  ul:last-child {
+    display: block;
   }
-  .modal-header-items {
+  .shipping-array {
+    padding-top: 16px;
+  }
+  li {
+    font-size: 12px;
+    font-weight: 400;
+    display: flex;
+    margin-right: 12px;
+  }
+
+  li span {
+    font-weight: 300;
+    display: flex;
+  }
+
+  .modal-header {
     display: none;
   }
 }
