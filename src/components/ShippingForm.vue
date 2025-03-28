@@ -94,8 +94,6 @@
               placeholder="(kg)"
               label="Peso*"
               id="peso"
-              @focus="onFocus"
-              @blur="onBlur"
             />
           </div>
           <div class="container-input-small">
@@ -306,9 +304,18 @@ export default {
     removeMask(cep) {
       return cep.replace(/\D/g, "");
     },
-
     adicionarProduto() {
-      if (this.isAddingProduct) return;
+      if (this.isAddingProduct || this.produtos.length >= 2) {
+        if (this.addToast) {
+          this.addToast(
+            "info",
+            "Limite de produtos",
+            "Você já atingiu o limite de 2 produtos."
+          );
+        }
+        return;
+      }
+
       this.isAddingProduct = true;
 
       this.produtos.push({
@@ -393,9 +400,6 @@ export default {
       } finally {
         this.isLoading = false;
       }
-    },
-    onBlur() {
-      this.isFocused = false;
     },
   },
 };
