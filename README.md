@@ -174,11 +174,5 @@ Validação de campos obrigatórios e formatos, incluindo:
 3. **Inicie o projeto Vue**:
 
    ```bash
-   npm run dev
-   ```
-
-4. **Acesse no navegador**:
-
-   ```bash
-   http://localhost:8080
+   npm run serve
    ```
