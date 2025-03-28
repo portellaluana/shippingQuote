@@ -157,6 +157,14 @@ Validação de campos obrigatórios e formatos, incluindo:
 
 ---
 
+## Demonstração do Projeto
+
+**Tela de cotação e buscar CEP**
+![Cotação](/public/preview-mobile.png)
+![Buscar CEP](/public/buscar-cep-mobile.png)
+
+---
+
 ## Configuração e Execução do Projeto
 
 1. **Clone o repositório**:
