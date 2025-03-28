@@ -62,7 +62,6 @@
       <p>{{ errorMessage }}</p>
     </div>
   </div>
-  <div class="filter" @click="closeModal"></div>
 </template>
 
 
@@ -205,7 +204,7 @@ label {
   max-width: 900px;
   max-height: 80vh;
   overflow-y: auto;
-  z-index: 2;
+  z-index: 99;
   position: fixed;
   top: 50%;
   left: 50%;

@@ -74,6 +74,6 @@ export default {
 .preco {
   color: #3c4151;
   font-weight: 800;
-  font-size: 24px;
+  font-size: 16px;
 }
 </style>

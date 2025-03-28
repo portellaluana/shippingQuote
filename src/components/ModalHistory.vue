@@ -38,8 +38,6 @@
       </BaseButton>
     </div>
   </div>
-
-  <div v-if="showModal" class="filter" @click="close"></div>
 </template>
 
 <script>
@@ -88,9 +86,21 @@ export default {
   },
 };
 </script>
-
-
 <style scoped>
+.modal {
+  background-color: white;
+  padding: 22px;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 900px;
+  max-height: 80vh;
+  overflow-y: auto;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 99;
+}
 .primary-btn {
   background-color: #02aeef;
   border: none;

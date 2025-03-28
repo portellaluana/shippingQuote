@@ -21,7 +21,7 @@
             @blur="validateSellerCep"
           />
           <div class="container-cep-text">
-            <CepValidator ref="sellerCepValidator" :cep="form.SellerCEP" />
+            <CEPValidator ref="sellerCEPValidator" :cep="form.SellerCEP" />
           </div>
         </div>
 
@@ -43,8 +43,8 @@
             @blur="validateRecipientCep"
           />
           <div class="container-cep-text">
-            <CepValidator
-              ref="recipientCepValidator"
+            <CEPValidator
+              ref="recipientCEPValidator"
               :cep="form.RecipientCEP"
             />
           </div>
@@ -165,19 +165,19 @@
 import { postShippingQuote } from "../services/shipping";
 import BaseButton from "./BaseButton.vue";
 import ShippingQuoteList from "./ShippingQuoteList.vue";
-import CepValidator from "./CepValidator.vue";
 import BaseInput from "./BaseInput.vue";
 import formatter from "../utils/formatterCurrency.js";
 import _ from "lodash";
 import Loading from "./Loading.vue";
 import BaseToast from "./BaseToast.vue";
 import emitter from "@/utils/eventBus";
+import CEPValidator from "./CEPValidator.vue";
 
 export default {
   components: {
     BaseButton,
     ShippingQuoteList,
-    CepValidator,
+    CEPValidator,
     BaseInput,
     Loading,
     BaseToast,
@@ -329,11 +329,11 @@ export default {
     },
 
     validateSellerCep() {
-      this.$refs.sellerCepValidator.validateCep(this.form.SellerCEP);
+      this.$refs.sellerCEPValidator.validateCep(this.form.SellerCEP);
     },
 
     validateRecipientCep() {
-      this.$refs.recipientCepValidator.validateCep(this.form.RecipientCEP);
+      this.$refs.recipientCEPValidator.validateCep(this.form.RecipientCEP);
     },
 
     async handleData() {
